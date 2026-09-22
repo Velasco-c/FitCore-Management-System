@@ -1,0 +1,36 @@
+{
+  "name": "fitcore-management-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/app.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Velasco-c/FitCore-Management-System.git"
+  },
+  "keywords": [],
+  "author": "Velasco-c",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Velasco-c/FitCore-Management-System/issues"
+  },
+  "homepage": "https://github.com/Velasco-c/FitCore-Management-System#readme",
+  "dependencies": {
+    "chalk": "^6.0.0",
+    "dotenv": "^18.0.2",
+    "inquirer": "^14.2.2",
+    "mysql2": "^3.24.4"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2"
+  }
+}
