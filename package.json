@@ -1,22 +1,32 @@
 {
   "name": "fitcore-management-system",
   "version": "1.0.0",
-  "description": "",
+  "description": "CLI para la gestión integral de clientes, entrenamiento, nutrición y finanzas de un entrenador personal o gimnasio.",
   "main": "src/app.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js"
+  },
   "directories": {
     "doc": "docs",
     "test": "tests"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js",
-    "dev": "node --watch src/app.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Velasco-c/FitCore-Management-System.git"
   },
-  "keywords": [],
+  "keywords": [
+      "nodejs",
+      "mysql",
+      "cli",
+      "oop",
+      "solid",
+      "fitness",
+      "gym"
+  ],
   "author": "Velasco-c",
   "license": "ISC",
   "type": "module",
