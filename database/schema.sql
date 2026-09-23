@@ -86,7 +86,6 @@ CREATE TABLE client_plans (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     client_id BIGINT UNSIGNED NOT NULL,
     training_plan_id BIGINT UNSIGNED NOT NULL,
-    previous_client_plan_id BIGINT UNSIGNED,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
@@ -140,12 +139,6 @@ CREATE TABLE client_plans (
     CONSTRAINT fk_client_plans_training_plan
         FOREIGN KEY (training_plan_id)
         REFERENCES training_plans(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_client_plans_previous
-        FOREIGN KEY (previous_client_plan_id)
-        REFERENCES client_plans(id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 ) ENGINE=InnoDB;
