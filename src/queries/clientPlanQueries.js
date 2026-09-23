@@ -1,10 +1,10 @@
 export const clientPlanQueries = {
+
     create: `
         INSERT INTO client_plans
             (
                 client_id,
                 training_plan_id,
-                previous_client_plan_id,
                 start_date,
                 end_date,
                 status,
@@ -14,7 +14,7 @@ export const clientPlanQueries = {
                 cancellation_reason
             )
         VALUES
-            (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
 
     findById: `
@@ -22,7 +22,6 @@ export const clientPlanQueries = {
             id,
             client_id,
             training_plan_id,
-            previous_client_plan_id,
             start_date,
             end_date,
             status,
@@ -41,7 +40,6 @@ export const clientPlanQueries = {
             id,
             client_id,
             training_plan_id,
-            previous_client_plan_id,
             start_date,
             end_date,
             status,
@@ -60,7 +58,6 @@ export const clientPlanQueries = {
             id,
             client_id,
             training_plan_id,
-            previous_client_plan_id,
             start_date,
             end_date,
             status,
@@ -80,7 +77,6 @@ export const clientPlanQueries = {
             id,
             client_id,
             training_plan_id,
-            previous_client_plan_id,
             start_date,
             end_date,
             status,
@@ -99,7 +95,6 @@ export const clientPlanQueries = {
         UPDATE client_plans
         SET
             training_plan_id = ?,
-            previous_client_plan_id = ?,
             start_date = ?,
             end_date = ?,
             status = ?,
