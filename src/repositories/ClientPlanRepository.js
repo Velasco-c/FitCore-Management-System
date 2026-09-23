@@ -3,19 +3,31 @@ import { ClientPlan } from "../models/ClientPlan.js";
 import { clientPlanQueries } from "../queries/clientPlanQueries.js";
 
 const mapRowToClientPlan = (row) => new ClientPlan({
+
     id: row.id,
+
     clientId: row.client_id,
+
     trainingPlanId: row.training_plan_id,
-    previousClientPlanId: row.previous_client_plan_id,
+
     startDate: row.start_date,
+
     endDate: row.end_date,
+
     status: row.status,
+
     agreedPrice: row.agreed_price,
+
     goal: row.goal,
+
     cancelledAt: row.cancelled_at,
+
     cancellationReason: row.cancellation_reason,
+
     createdAt: row.created_at,
+
     updatedAt: row.updated_at
+
 });
 
 export class ClientPlanRepository {
@@ -25,7 +37,6 @@ export class ClientPlanRepository {
             [
                 clientPlan.clientId,
                 clientPlan.trainingPlanId,
-                clientPlan.previousClientPlanId,
                 clientPlan.startDate,
                 clientPlan.endDate,
                 clientPlan.status,
@@ -79,7 +90,6 @@ export class ClientPlanRepository {
             clientPlanQueries.update,
             [
                 clientPlan.trainingPlanId,
-                clientPlan.previousClientPlanId,
                 clientPlan.startDate,
                 clientPlan.endDate,
                 clientPlan.status,
