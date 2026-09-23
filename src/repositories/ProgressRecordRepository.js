@@ -1,4 +1,4 @@
-import pool from "../database/connection.js";
+import { pool } from "../database/connection.js";
 import { ProgressRecord } from "../models/ProgressRecord.js";
 import { progressRecordQueries } from "../queries/progressRecordQueries.js";
 

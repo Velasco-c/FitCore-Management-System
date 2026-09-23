@@ -1,4 +1,4 @@
-import pool from "../database/connection.js";
+import { pool } from "../database/connection.js";
 import { NutritionDay } from "../models/NutritionDay.js";
 import { nutritionDayQueries } from "../queries/nutritionDayQueries.js";
 

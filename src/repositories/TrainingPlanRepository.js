@@ -1,4 +1,4 @@
-import pool from "../database/connection.js";
+import { pool } from "../database/connection.js";
 import { TrainingPlan } from "../models/TrainingPlan.js";
 import { trainingPlanQueries } from "../queries/trainingPlanQueries.js";
 
