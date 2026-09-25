@@ -1,9 +1,13 @@
+import { Client } from "../models/Client.js";
 import { ClientRepository } from "../repositories/ClientRepository.js";
+import { ClientValidator } from "../validators/ClientValidator.js";
 
 export class ClientService {
 
-    static async create(client) {
-        return await ClientRepository.create(client);
+    static async create(data) {
+        const validatedData = ClientValidator.validateCreate(data);
+        const client = new Client(validatedData);
+        return ClientRepository.create(client);
     }
 
     static async findById(id) {

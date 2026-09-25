@@ -1,11 +1,13 @@
+import { Contract } from "../models/Contract.js";
 import { ContractRepository } from "../repositories/ContractRepository.js";
+import { ContractValidator } from "../validators/ContractValidator.js";
 
 export class ContractService {
-
-    static async create(contract) {
-        return await ContractRepository.create(contract);
+    static async create(data) {
+        const validatedData = ContractValidator.validateCreate(data);
+        const contract = new Contract(validatedData);
+        return ContractRepository.create(contract);
     }
-
     static async findById(id) {
         return await ContractRepository.findById(id);
     }

@@ -1,9 +1,13 @@
+import { NutritionDayFood } from "../models/NutritionDayFood.js";
 import { NutritionDayFoodRepository } from "../repositories/NutritionDayFoodRepository.js";
+import { NutritionDayFoodValidator } from "../validators/NutritionDayFoodValidator.js";
 
 export class NutritionDayFoodService {
 
-    static async create(nutritionDayFood) {
-        return await NutritionDayFoodRepository.create(nutritionDayFood);
+    static async create(data) {
+        const validatedData = NutritionDayFoodValidator.validateCreate(data);
+        const nutritionDayFood = new NutritionDayFood(validatedData);
+        return NutritionDayFoodRepository.create(nutritionDayFood);
     }
 
     static async findById(id) {

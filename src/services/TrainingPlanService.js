@@ -1,9 +1,13 @@
+import { TrainingPlan } from "../models/TrainingPlan.js";
 import { TrainingPlanRepository } from "../repositories/TrainingPlanRepository.js";
+import { TrainingPlanValidator } from "../validators/TrainingPlanValidator.js";
 
 export class TrainingPlanService {
 
-    static async create(trainingPlan) {
-        return await TrainingPlanRepository.create(trainingPlan);
+    static async create(data) {
+        const validatedData = TrainingPlanValidator.validateCreate(data);
+        const trainingPlan = new TrainingPlan(validatedData);
+            return TrainingPlanRepository.create(trainingPlan);
     }
 
     static async findById(id) {

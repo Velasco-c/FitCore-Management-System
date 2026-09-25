@@ -1,9 +1,12 @@
+import { ClientPlan } from "../models/ClientPlan.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
+import { ClientPlanValidator } from "../validators/ClientPlanValidator.js";
 
 export class ClientPlanService {
-
-    static async create(clientPlan) {
-        return await ClientPlanRepository.create(clientPlan);
+    static async create(data) {
+        const validatedData = ClientPlanValidator.validateCreate(data);
+        const clientPlan = new ClientPlan(validatedData);
+        return ClientPlanRepository.create(clientPlan);
     }
 
     static async findById(id) {
