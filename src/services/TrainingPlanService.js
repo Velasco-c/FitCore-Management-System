@@ -27,4 +27,8 @@ export class TrainingPlanService {
         const trainingPlan = new TrainingPlan(validatedData);
         return TrainingPlanRepository.update(id, trainingPlan);
     }
+
+    static async deactivate(id) {
+        return TrainingPlanRepository.deactivate(id);
+    }
 }

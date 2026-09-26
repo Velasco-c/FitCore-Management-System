@@ -25,6 +25,11 @@ export class ClientService {
     static async update(id, data) {
         const validatedData = ClientValidator.validateUpdate(data);
         const client = new Client(validatedData);
+
         return ClientRepository.update(id, client);
+    }
+
+    static async deactivate(id) {
+        return ClientRepository.deactivate(id);
     }
 }
