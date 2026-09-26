@@ -11,21 +11,21 @@ export class ProgressRecordService {
     }
 
     static async findById(id) {
-        return await ProgressRecordRepository.findById(id);
+        return ProgressRecordRepository.findById(id);
     }
 
     static async findByClientPlanId(clientPlanId) {
-        return await ProgressRecordRepository.findByClientPlanId(clientPlanId);
+        return ProgressRecordRepository.findByClientPlanId(clientPlanId);
     }
 
     static async findByClientPlanAndDate(clientPlanId, recordDate) {
-        return await ProgressRecordRepository.findByClientPlanAndDate(
+        return ProgressRecordRepository.findByClientPlanAndDate(
             clientPlanId,
             recordDate
         );
     }
 
     static async findAll() {
-        return await ProgressRecordRepository.findAll();
+        return ProgressRecordRepository.findAll();
     }
 }

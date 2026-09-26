@@ -11,27 +11,26 @@ export class NutritionDayFoodService {
     }
 
     static async findById(id) {
-        return await NutritionDayFoodRepository.findById(id);
+        return NutritionDayFoodRepository.findById(id);
     }
 
     static async findByNutritionDayId(nutritionDayId) {
-        return await NutritionDayFoodRepository.findByNutritionDayId(
+        return NutritionDayFoodRepository.findByNutritionDayId(
             nutritionDayId
         );
     }
 
     static async findByFoodId(foodId) {
-        return await NutritionDayFoodRepository.findByFoodId(foodId);
+        return NutritionDayFoodRepository.findByFoodId(foodId);
     }
 
     static async findAll() {
-        return await NutritionDayFoodRepository.findAll();
+        return NutritionDayFoodRepository.findAll();
     }
 
-    static async update(id, nutritionDayFood) {
-        return await NutritionDayFoodRepository.update(
-            id,
-            nutritionDayFood
-        );
+    static async update(id, data) {
+        const validatedData = NutritionDayFoodValidator.validateUpdate(data);
+        const nutritionDayFood = new NutritionDayFood(validatedData);
+        return NutritionDayFoodRepository.update(id, nutritionDayFood);
     }
 }

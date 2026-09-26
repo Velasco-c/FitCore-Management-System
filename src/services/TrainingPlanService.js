@@ -7,22 +7,24 @@ export class TrainingPlanService {
     static async create(data) {
         const validatedData = TrainingPlanValidator.validateCreate(data);
         const trainingPlan = new TrainingPlan(validatedData);
-            return TrainingPlanRepository.create(trainingPlan);
+        return TrainingPlanRepository.create(trainingPlan);
     }
 
     static async findById(id) {
-        return await TrainingPlanRepository.findById(id);
+        return TrainingPlanRepository.findById(id);
     }
 
     static async findByName(name) {
-        return await TrainingPlanRepository.findByName(name);
+        return TrainingPlanRepository.findByName(name);
     }
 
     static async findAll() {
-        return await TrainingPlanRepository.findAll();
+        return TrainingPlanRepository.findAll();
     }
 
-    static async update(id, trainingPlan) {
-        return await TrainingPlanRepository.update(id, trainingPlan);
+    static async update(id, data) {
+        const validatedData = TrainingPlanValidator.validateUpdate(data);
+        const trainingPlan = new TrainingPlan(validatedData);
+        return TrainingPlanRepository.update(id, trainingPlan);
     }
 }

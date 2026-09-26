@@ -10,29 +10,25 @@ export class FinancialTransactionService {
         return FinancialTransactionRepository.create(financialTransaction);
     }
 
-
     static async findById(id) {
-        return await FinancialTransactionRepository.findById(id);
+        return FinancialTransactionRepository.findById(id);
     }
 
     static async findByClientPlanId(clientPlanId) {
-        return await FinancialTransactionRepository.findByClientPlanId(
+        return FinancialTransactionRepository.findByClientPlanId(
             clientPlanId
         );
     }
 
     static async findByType(type) {
-        return await FinancialTransactionRepository.findByType(type);
+        return FinancialTransactionRepository.findByType(type);
     }
 
     static async findAll() {
-        return await FinancialTransactionRepository.findAll();
+        return FinancialTransactionRepository.findAll();
     }
 
     static async updateStatus(id, status) {
-        return await FinancialTransactionRepository.updateStatus(
-            id,
-            status
-        );
+        return FinancialTransactionRepository.updateStatus(id, status);
     }
 }

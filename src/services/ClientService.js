@@ -11,18 +11,20 @@ export class ClientService {
     }
 
     static async findById(id) {
-        return await ClientRepository.findById(id);
+        return ClientRepository.findById(id);
     }
 
     static async findByEmail(email) {
-        return await ClientRepository.findByEmail(email);
+        return ClientRepository.findByEmail(email);
     }
 
     static async findAll() {
-        return await ClientRepository.findAll();
+        return ClientRepository.findAll();
     }
 
-    static async update(id, client) {
-        return await ClientRepository.update(id, client);
+    static async update(id, data) {
+        const validatedData = ClientValidator.validateUpdate(data);
+        const client = new Client(validatedData);
+        return ClientRepository.update(id, client);
     }
 }

@@ -11,18 +11,20 @@ export class FoodService {
     }
 
     static async findById(id) {
-        return await FoodRepository.findById(id);
+        return FoodRepository.findById(id);
     }
 
     static async findByName(name) {
-        return await FoodRepository.findByName(name);
+        return FoodRepository.findByName(name);
     }
 
     static async findAll() {
-        return await FoodRepository.findAll();
+        return FoodRepository.findAll();
     }
 
-    static async update(id, food) {
-        return await FoodRepository.update(id, food);
+    static async update(id, data) {
+        const validatedData = FoodValidator.validateUpdate(data);
+        const food = new Food(validatedData);
+        return FoodRepository.update(id, food);
     }
 }

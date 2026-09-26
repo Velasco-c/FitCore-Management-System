@@ -11,22 +11,24 @@ export class NutritionPlanService {
     }
 
     static async findById(id) {
-        return await NutritionPlanRepository.findById(id);
+        return NutritionPlanRepository.findById(id);
     }
 
     static async findByClientPlanId(clientPlanId) {
-        return await NutritionPlanRepository.findByClientPlanId(clientPlanId);
+        return NutritionPlanRepository.findByClientPlanId(clientPlanId);
     }
 
     static async findAll() {
-        return await NutritionPlanRepository.findAll();
+        return NutritionPlanRepository.findAll();
     }
 
-    static async update(id, nutritionPlan) {
-        return await NutritionPlanRepository.update(id, nutritionPlan);
+    static async update(id, data) {
+        const validatedData = NutritionPlanValidator.validateUpdate(data);
+        const nutritionPlan = new NutritionPlan(validatedData);
+        return NutritionPlanRepository.update(id, nutritionPlan);
     }
 
     static async updateStatus(id, status) {
-        return await NutritionPlanRepository.updateStatus(id, status);
+        return NutritionPlanRepository.updateStatus(id, status);
     }
 }
