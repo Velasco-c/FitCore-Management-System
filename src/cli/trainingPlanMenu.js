@@ -10,7 +10,7 @@ import {
 } from '../commands/trainingPlanCommands.js';
 
 async function getTrainingPlanData() {
-    return inquirer.prompt([
+    const data = await inquirer.prompt([
         {
             type: 'input',
             name: 'name',
@@ -24,7 +24,8 @@ async function getTrainingPlanData() {
         {
             type: 'input',
             name: 'durationWeeks',
-            message: 'Duración en semanas:'
+            message: 'Duración en semanas:',
+            filter: (value) => Number(value)
         },
         {
             type: 'input',
@@ -53,7 +54,8 @@ async function getTrainingPlanData() {
         {
             type: 'input',
             name: 'price',
-            message: 'Precio:'
+            message: 'Precio:',
+            filter: (value) => Number(value)
         },
         {
             type: 'select',
@@ -71,6 +73,8 @@ async function getTrainingPlanData() {
             ]
         }
     ]);
+
+    return data;
 }
 
 async function create() {

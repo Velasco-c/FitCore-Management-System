@@ -14,37 +14,45 @@ export class ClientPlanService {
             await ClientRepository.findById(
                 validatedData.clientId
             );
+
         if (!client) {
             throw new Error("El cliente no existe.");
         }
+
         if (client.status !== "ACTIVE") {
             throw new Error(
                 "No se puede asignar un plan a un cliente inactivo."
             );
         }
+
         const trainingPlan =
             await TrainingPlanRepository.findById(
                 validatedData.trainingPlanId
             );
+
         if (!trainingPlan) {
             throw new Error(
                 "El plan de entrenamiento no existe."
             );
         }
+
         if (trainingPlan.status !== "ACTIVE") {
             throw new Error(
                 "No se puede asignar un plan de entrenamiento inactivo."
             );
         }
-        const activePlan =
+
+        const activePlans =
             await ClientPlanRepository.findActiveByClientId(
                 validatedData.clientId
             );
-        if (activePlan) {
+
+        if (activePlans.length > 0) {
             throw new Error(
                 "El cliente ya tiene un plan de entrenamiento activo."
             );
         }
+
         const clientPlan =
             new ClientPlan(validatedData);
 
@@ -72,6 +80,7 @@ export class ClientPlanService {
     static async update(id, data) {
         const existingPlan =
             await ClientPlanRepository.findById(id);
+
         if (!existingPlan) {
             throw new Error(
                 "La asignación del plan no existe."
@@ -83,7 +92,7 @@ export class ClientPlanService {
 
         const client =
             await ClientRepository.findById(
-                validatedData.clientId
+                existingPlan.clientId
             );
 
         if (!client) {
@@ -113,8 +122,29 @@ export class ClientPlanService {
             );
         }
 
+        if (validatedData.status === "ACTIVE") {
+            const activePlans =
+                await ClientPlanRepository.findActiveByClientId(
+                    existingPlan.clientId
+                );
+
+            const anotherActivePlan =
+                activePlans.some(
+                    (activePlan) => activePlan.id !== id
+                );
+
+            if (anotherActivePlan) {
+                throw new Error(
+                    "El cliente ya tiene otro plan de entrenamiento activo."
+                );
+            }
+        }
+
         const clientPlan =
-            new ClientPlan(validatedData);
+            new ClientPlan({
+                ...validatedData,
+                clientId: existingPlan.clientId
+            });
 
         return ClientPlanRepository.update(
             id,
