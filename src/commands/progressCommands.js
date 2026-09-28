@@ -25,3 +25,11 @@ export async function findAllProgressRecords() {
 export async function updateProgressRecord(id, data) {
     return ProgressRecordService.update(id, data);
 }
+
+export async function findProgressRecordsByClientPlanId(
+    clientPlanId
+) {
+    return ProgressRecordService.findByClientPlanId(
+        clientPlanId
+    );
+}

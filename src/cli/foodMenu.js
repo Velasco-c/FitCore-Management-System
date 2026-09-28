@@ -17,38 +17,15 @@ async function getFoodData() {
         },
         {
             type: 'input',
-            name: 'calories',
-            message: 'Calorías:'
+            name: 'caloriesPer100g',
+            message: 'Calorías por 100g:',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'input',
-            name: 'protein',
-            message: 'Proteínas:'
-        },
-        {
-            type: 'input',
-            name: 'carbohydrates',
-            message: 'Carbohidratos:'
-        },
-        {
-            type: 'input',
-            name: 'fats',
-            message: 'Grasas:'
-        },
-        {
-            type: 'select',
-            name: 'status',
-            message: 'Estado:',
-            choices: [
-                {
-                    name: 'Activo',
-                    value: 'ACTIVE'
-                },
-                {
-                    name: 'Inactivo',
-                    value: 'INACTIVE'
-                }
-            ]
+            name: 'unit',
+            message: 'Unidad:',
+            default: 'g'
         }
     ]);
 }
@@ -67,7 +44,8 @@ async function findById() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del alimento:'
+            message: 'ID del alimento:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -97,7 +75,8 @@ async function update() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del alimento:'
+            message: 'ID del alimento:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -121,7 +100,8 @@ async function deactivate() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del alimento:'
+            message: 'ID del alimento:',
+            filter: value => Number(value)
         }
     ]);
 

@@ -60,19 +60,26 @@ export class ContractService {
     }
 
     static async update(id, data) {
-        const existingContract =
-            await ContractRepository.findById(id);
-        if (!existingContract) {
-            throw new Error("El contrato no existe.");
-        }
-        const validatedData =
-            ContractValidator.validateUpdate(data);
-        const contract =
-            new Contract(validatedData);
-        return ContractRepository.update(
-            id,
-            contract
-        );
+    const existingContract =
+        await ContractRepository.findById(id);
+
+    if (!existingContract) {
+        throw new Error("El contrato no existe.");
+    }
+
+    const validatedData =
+        ContractValidator.validateUpdate({
+            ...data,
+            clientPlanId: existingContract.clientPlanId
+        });
+
+    const contract =
+        new Contract(validatedData);
+
+    return ContractRepository.update(
+        id,
+        contract
+    );
     }
 
     static async updateStatus(id, status) {

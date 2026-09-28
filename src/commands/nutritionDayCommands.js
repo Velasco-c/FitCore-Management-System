@@ -25,3 +25,11 @@ export async function findNutritionDayByPlanAndDate(
 export async function updateNutritionDay(id, data) {
     return NutritionDayService.update(id, data);
 }
+
+export async function findNutritionDaysByNutritionPlanId(
+    nutritionPlanId
+) {
+    return NutritionDayService.findByNutritionPlanId(
+        nutritionPlanId
+    );
+}

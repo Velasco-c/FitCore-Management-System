@@ -13,12 +13,13 @@ async function getFinancialData() {
         {
             type: 'input',
             name: 'clientPlanId',
-            message: 'ID de la asignación (opcional):'
+            message: 'ID de la asignación (opcional):',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'select',
             name: 'type',
-            message: 'Tipo:',
+            message: 'Tipo de transacción:',
             choices: [
                 {
                     name: 'Ingreso',
@@ -31,24 +32,73 @@ async function getFinancialData() {
             ]
         },
         {
-            type: 'input',
+            type: 'select',
             name: 'category',
-            message: 'Categoría:'
+            message: 'Categoría:',
+            choices: [
+                {
+                    name: 'Membresía',
+                    value: 'MEMBERSHIP'
+                },
+                {
+                    name: 'Sesión personal',
+                    value: 'PERSONAL_SESSION'
+                },
+                {
+                    name: 'Servicios',
+                    value: 'SERVICES'
+                },
+                {
+                    name: 'Suplementos',
+                    value: 'SUPPLEMENTS'
+                },
+                {
+                    name: 'Operación',
+                    value: 'OPERATING'
+                },
+                {
+                    name: 'Otro',
+                    value: 'OTHER'
+                }
+            ]
         },
         {
             type: 'input',
             name: 'amount',
-            message: 'Monto:'
+            message: 'Monto:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
             name: 'transactionDate',
-            message: 'Fecha (YYYY-MM-DD):'
+            message: 'Fecha y hora (YYYY-MM-DD HH:mm:ss):'
         },
         {
-            type: 'input',
+            type: 'select',
             name: 'paymentMethod',
-            message: 'Método de pago:'
+            message: 'Método de pago:',
+            choices: [
+                {
+                    name: 'Efectivo',
+                    value: 'CASH'
+                },
+                {
+                    name: 'Tarjeta',
+                    value: 'CARD'
+                },
+                {
+                    name: 'Transferencia',
+                    value: 'TRANSFER'
+                },
+                {
+                    name: 'Otro',
+                    value: 'OTHER'
+                },
+                {
+                    name: 'No especificado',
+                    value: null
+                }
+            ]
         },
         {
             type: 'input',
@@ -84,10 +134,6 @@ async function getFinancialData() {
 
 async function create() {
     const data = await getFinancialData();
-
-    if (!data.clientPlanId) {
-        data.clientPlanId = null;
-    }
 
     const transaction =
         await createFinancialTransaction(data);
@@ -146,10 +192,6 @@ async function update() {
     }
 
     const data = await getFinancialData();
-
-    if (!data.clientPlanId) {
-        data.clientPlanId = null;
-    }
 
     const transaction =
         await updateFinancialTransaction(id, data);

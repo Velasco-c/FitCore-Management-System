@@ -80,6 +80,30 @@ export class FinancialTransactionRepository {
         return rows.map(mapRowToFinancialTransaction);
     }
 
+    static async update(
+    id,
+    financialTransaction,
+    connection = pool
+) {
+    const [result] = await connection.execute(
+        financialTransactionQueries.update,
+        [
+            financialTransaction.clientPlanId,
+            financialTransaction.type,
+            financialTransaction.category,
+            financialTransaction.amount,
+            financialTransaction.transactionDate,
+            financialTransaction.paymentMethod,
+            financialTransaction.description,
+            financialTransaction.reference,
+            financialTransaction.status,
+            id
+        ]
+    );
+
+    return result.affectedRows;
+    }
+
     static async updateStatus(
         id,
         status,

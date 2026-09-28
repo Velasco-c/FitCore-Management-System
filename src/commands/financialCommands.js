@@ -19,3 +19,15 @@ export async function updateFinancialTransaction(id, data) {
 export async function updateFinancialTransactionStatus(id, status) {
     return FinancialTransactionService.updateStatus(id, status);
 }
+
+export async function findFinancialTransactionsByClientPlanId(
+    clientPlanId
+) {
+    return FinancialTransactionService.findByClientPlanId(
+        clientPlanId
+    );
+}
+
+export async function findFinancialTransactionsByType(type) {
+    return FinancialTransactionService.findByType(type);
+}

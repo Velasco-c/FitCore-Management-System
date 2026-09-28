@@ -15,12 +15,14 @@ async function getClientPlanData() {
         {
             type: 'input',
             name: 'clientId',
-            message: 'ID del cliente:'
+            message: 'ID del cliente:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
             name: 'trainingPlanId',
-            message: 'ID del plan de entrenamiento:'
+            message: 'ID del plan de entrenamiento:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
@@ -58,7 +60,8 @@ async function getClientPlanData() {
         {
             type: 'input',
             name: 'agreedPrice',
-            message: 'Precio acordado:'
+            message: 'Precio acordado:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
@@ -68,12 +71,14 @@ async function getClientPlanData() {
         {
             type: 'input',
             name: 'cancelledAt',
-            message: 'Fecha de cancelación (YYYY-MM-DD, opcional):'
+            message: 'Fecha de cancelación (YYYY-MM-DD HH:mm:ss):',
+            when: answers => answers.status === 'CANCELLED'
         },
         {
             type: 'input',
             name: 'cancellationReason',
-            message: 'Motivo de cancelación (opcional):'
+            message: 'Motivo de cancelación:',
+            when: answers => answers.status === 'CANCELLED'
         }
     ]);
 }
@@ -92,7 +97,8 @@ async function findById() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -111,7 +117,8 @@ async function findByClientId() {
         {
             type: 'input',
             name: 'clientId',
-            message: 'ID del cliente:'
+            message: 'ID del cliente:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -130,7 +137,8 @@ async function findActive() {
         {
             type: 'input',
             name: 'clientId',
-            message: 'ID del cliente:'
+            message: 'ID del cliente:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -161,7 +169,8 @@ async function update() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -186,7 +195,8 @@ async function cancel() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -197,11 +207,28 @@ async function cancel() {
         return;
     }
 
-    const data = await inquirer.prompt([
+    const { confirm } = await inquirer.prompt([
+        {
+            type: 'confirm',
+            name: 'confirm',
+            message: '¿Desea cancelar esta asignación?',
+            default: false
+        }
+    ]);
+
+    if (!confirm) {
+        console.log('\nOperación cancelada.');
+        return;
+    }
+
+    const {
+        cancelledAt,
+        cancellationReason
+    } = await inquirer.prompt([
         {
             type: 'input',
             name: 'cancelledAt',
-            message: 'Fecha de cancelación (YYYY-MM-DD):'
+            message: 'Fecha de cancelación (YYYY-MM-DD HH:mm:ss):'
         },
         {
             type: 'input',
@@ -212,8 +239,8 @@ async function cancel() {
 
     await cancelClientPlan(
         id,
-        data.cancelledAt,
-        data.cancellationReason
+        cancelledAt,
+        cancellationReason
     );
 
     console.log('\nAsignación cancelada correctamente.');

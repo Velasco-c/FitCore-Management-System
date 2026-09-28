@@ -10,54 +10,63 @@ import {
 } from '../commands/clientCommands.js';
 
 async function getClientData() {
-    const { firstName, lastName, email, phone, birthDate, gender, status } =
-        await inquirer.prompt([
-            {
-                type: 'input',
-                name: 'firstName',
-                message: 'Nombre:'
-            },
-            {
-                type: 'input',
-                name: 'lastName',
-                message: 'Apellido:'
-            },
-            {
-                type: 'input',
-                name: 'email',
-                message: 'Correo electrónico:'
-            },
-            {
-                type: 'input',
-                name: 'phone',
-                message: 'Teléfono:'
-            },
-            {
-                type: 'input',
-                name: 'birthDate',
-                message: 'Fecha de nacimiento (YYYY-MM-DD):'
-            },
-            {
-                type: 'select',
-                name: 'gender',
-                message: 'Género:',
-                choices: [
-                    { name: 'Masculino', value: 'MALE' },
-                    { name: 'Femenino', value: 'FEMALE' },
-                    { name: 'Otro', value: 'OTHER' },
-                    { name: 'Prefiero no especificar', value: null }
-                ]
-            },
-            {
-                type: 'select',
-                name: 'status',
-                message: 'Estado:',
-                choices: [
-                    { name: 'Activo', value: 'ACTIVE' },
-                    { name: 'Inactivo', value: 'INACTIVE' }
-                ]
-            }
-        ]);
+    const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        birthDate,
+        gender
+    } = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: 'Nombre:'
+        },
+        {
+            type: 'input',
+            name: 'lastName',
+            message: 'Apellido:'
+        },
+        {
+            type: 'input',
+            name: 'email',
+            message: 'Correo electrónico:'
+        },
+        {
+            type: 'input',
+            name: 'phone',
+            message: 'Teléfono:'
+        },
+        {
+            type: 'input',
+            name: 'birthDate',
+            message: 'Fecha de nacimiento (YYYY-MM-DD):'
+        },
+        {
+            type: 'select',
+            name: 'gender',
+            message: 'Género:',
+            choices: [
+                {
+                    name: 'Masculino',
+                    value: 'MALE'
+                },
+                {
+                    name: 'Femenino',
+                    value: 'FEMALE'
+                },
+                {
+                    name: 'Otro',
+                    value: 'OTHER'
+                },
+                {
+                    name: 'Prefiero no especificar',
+                    value: null
+                }
+            ]
+        }
+    ]);
 
     return {
         firstName,
@@ -65,8 +74,7 @@ async function getClientData() {
         email,
         phone: phone || null,
         birthDate: birthDate || null,
-        gender,
-        status
+        gender
     };
 }
 

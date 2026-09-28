@@ -15,6 +15,10 @@ export class FoodService {
         return FoodRepository.findById(id);
     }
 
+    static async findByName(name) {
+    return FoodRepository.findByName(name);
+    }
+
     static async findAll() {
         return FoodRepository.findAll();
     }

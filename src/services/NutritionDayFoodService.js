@@ -52,27 +52,65 @@ export class NutritionDayFoodService {
         );
     }
 
+    static async findByNutritionDayId(nutritionDayId) {
+    return NutritionDayFoodRepository.findByNutritionDayId(
+        nutritionDayId
+    );
+    }
+
+    static async findByFoodId(foodId) {
+        return NutritionDayFoodRepository.findByFoodId(
+            foodId
+        );
+    }
+
     static async findAll() {
         return NutritionDayFoodRepository.findAll();
     }
 
     static async update(id, data) {
-        const existingRelation =
-            await NutritionDayFoodRepository.findById(id);
-        if (!existingRelation) {
-            throw new Error(
-                "La relación alimento-día no existe."
-            );
-        }
+    const existingRelation =
+        await NutritionDayFoodRepository.findById(id);
 
-        const validatedData =
-            NutritionDayFoodValidator.validateUpdate(data);
-        const nutritionDayFood =
-            new NutritionDayFood(validatedData);
-        return NutritionDayFoodRepository.update(
-            id,
-            nutritionDayFood
+    if (!existingRelation) {
+        throw new Error(
+            "La relación alimento-día no existe."
         );
+    }
+
+    const validatedData =
+        NutritionDayFoodValidator.validateUpdate({
+            ...data,
+            nutritionDayId: existingRelation.nutritionDayId
+        });
+
+    const food =
+        await FoodRepository.findById(
+            validatedData.foodId
+        );
+
+    if (!food) {
+        throw new Error(
+            "El alimento no existe."
+        );
+    }
+
+    if (food.status !== "ACTIVE") {
+        throw new Error(
+            "El alimento está inactivo."
+        );
+    }
+
+    const nutritionDayFood =
+        new NutritionDayFood({
+            ...validatedData,
+            nutritionDayId: existingRelation.nutritionDayId
+        });
+
+    return NutritionDayFoodRepository.update(
+        id,
+        nutritionDayFood
+    );
     }
 
     static async delete(id) {

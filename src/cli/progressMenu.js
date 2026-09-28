@@ -13,7 +13,8 @@ async function getProgressData() {
         {
             type: 'input',
             name: 'clientPlanId',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
@@ -23,32 +24,38 @@ async function getProgressData() {
         {
             type: 'input',
             name: 'weightKg',
-            message: 'Peso (kg):'
+            message: 'Peso (kg):',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'input',
             name: 'bodyFatPercentage',
-            message: 'Grasa corporal (%):'
+            message: 'Grasa corporal (%):',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'input',
             name: 'waistCm',
-            message: 'Cintura (cm):'
+            message: 'Cintura (cm):',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'input',
             name: 'chestCm',
-            message: 'Pecho (cm):'
+            message: 'Pecho (cm):',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'input',
             name: 'armCm',
-            message: 'Brazo (cm):'
+            message: 'Brazo (cm):',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'input',
             name: 'legCm',
-            message: 'Pierna (cm):'
+            message: 'Pierna (cm):',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'input',
@@ -77,7 +84,8 @@ async function findById() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del registro:'
+            message: 'ID del registro:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -96,7 +104,8 @@ async function findByClientPlanAndDate() {
         {
             type: 'input',
             name: 'clientPlanId',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
@@ -135,7 +144,8 @@ async function update() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del registro:'
+            message: 'ID del registro:',
+            filter: value => Number(value)
         }
     ]);
 

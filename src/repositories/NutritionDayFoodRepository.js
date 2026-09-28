@@ -84,4 +84,12 @@ export class NutritionDayFoodRepository {
 
         return result.affectedRows;
     }
+
+    static async delete(id, connection = pool) {
+    const [result] = await connection.execute(
+        nutritionDayFoodQueries.delete,
+        [id]
+    );
+    return result.affectedRows;
+    }
 }

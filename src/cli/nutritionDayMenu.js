@@ -13,7 +13,8 @@ async function getNutritionDayData() {
         {
             type: 'input',
             name: 'nutritionPlanId',
-            message: 'ID del plan nutricional:'
+            message: 'ID del plan nutricional:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
@@ -42,7 +43,8 @@ async function findById() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del día nutricional:'
+            message: 'ID del día nutricional:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -72,7 +74,8 @@ async function findByPlanAndDate() {
         {
             type: 'input',
             name: 'nutritionPlanId',
-            message: 'ID del plan nutricional:'
+            message: 'ID del plan nutricional:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
@@ -100,7 +103,8 @@ async function update() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del día nutricional:'
+            message: 'ID del día nutricional:',
+            filter: value => Number(value)
         }
     ]);
 

@@ -15,7 +15,8 @@ async function getContractData() {
         {
             type: 'input',
             name: 'clientPlanId',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
@@ -40,7 +41,8 @@ async function getContractData() {
         {
             type: 'input',
             name: 'price',
-            message: 'Precio:'
+            message: 'Precio:',
+            filter: value => Number(value)
         },
         {
             type: 'select',
@@ -58,6 +60,10 @@ async function getContractData() {
                 {
                     name: 'Cancelado',
                     value: 'CANCELLED'
+                },
+                {
+                    name: 'Expirado',
+                    value: 'EXPIRED'
                 }
             ]
         }
@@ -78,7 +84,8 @@ async function findById() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del contrato:'
+            message: 'ID del contrato:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -97,7 +104,8 @@ async function findByClientPlan() {
         {
             type: 'input',
             name: 'clientPlanId',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -148,7 +156,8 @@ async function update() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del contrato:'
+            message: 'ID del contrato:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -172,7 +181,8 @@ async function updateStatusAction() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del contrato:'
+            message: 'ID del contrato:',
+            filter: value => Number(value)
         },
         {
             type: 'select',

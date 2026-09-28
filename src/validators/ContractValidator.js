@@ -4,7 +4,7 @@ export class ContractValidator {
         const {
             clientPlanId,
             contractNumber,
-            conditions = null,
+            conditions,
             startDate,
             endDate,
             price,
@@ -13,6 +13,7 @@ export class ContractValidator {
 
         this.validateId(clientPlanId, "clientPlanId");
         this.validateRequiredString(contractNumber, "contractNumber");
+        this.validateRequiredString(conditions, "conditions");
         this.validateDate(startDate, "startDate");
         this.validateDate(endDate, "endDate");
         this.validateDateRange(startDate, endDate);

@@ -14,22 +14,54 @@ async function getData() {
         {
             type: 'input',
             name: 'nutritionDayId',
-            message: 'ID del día nutricional:'
+            message: 'ID del día nutricional:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
             name: 'foodId',
-            message: 'ID del alimento:'
+            message: 'ID del alimento:',
+            filter: value => Number(value)
+        },
+        {
+            type: 'select',
+            name: 'mealType',
+            message: 'Tipo de comida:',
+            choices: [
+                {
+                    name: 'Desayuno',
+                    value: 'BREAKFAST'
+                },
+                {
+                    name: 'Snack',
+                    value: 'SNACK'
+                },
+                {
+                    name: 'Almuerzo',
+                    value: 'LUNCH'
+                },
+                {
+                    name: 'Cena',
+                    value: 'DINNER'
+                }
+            ]
         },
         {
             type: 'input',
             name: 'quantity',
-            message: 'Cantidad:'
+            message: 'Cantidad:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
-            name: 'unit',
-            message: 'Unidad:'
+            name: 'estimatedCalories',
+            message: 'Calorías estimadas (opcional):',
+            filter: value => value ? Number(value) : null
+        },
+        {
+            type: 'input',
+            name: 'notes',
+            message: 'Notas:'
         }
     ]);
 }
@@ -49,7 +81,8 @@ async function findById() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID de la relación:'
+            message: 'ID de la relación:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -101,7 +134,8 @@ async function update() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID de la relación:'
+            message: 'ID de la relación:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -127,7 +161,8 @@ async function remove() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID de la relación:'
+            message: 'ID de la relación:',
+            filter: value => Number(value)
         }
     ]);
 

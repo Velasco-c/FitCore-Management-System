@@ -32,6 +32,12 @@ export class NutritionDayService {
         return NutritionDayRepository.findAll();
     }
 
+    static async findByNutritionPlanId(nutritionPlanId) {
+    return NutritionDayRepository.findByNutritionPlanId(
+        nutritionPlanId
+    );
+}
+
     static async findByPlanAndDate(
         nutritionPlanId,
         dayDate
@@ -43,21 +49,30 @@ export class NutritionDayService {
     }
 
     static async update(id, data) {
-        const existingDay =
-            await NutritionDayRepository.findById(id);
+    const existingDay =
+        await NutritionDayRepository.findById(id);
 
-        if (!existingDay) {
-            throw new Error(
-                "El día nutricional no existe."
-            );
-        }
-        const validatedData =
-            NutritionDayValidator.validateUpdate(data);
-        const nutritionDay =
-            new NutritionDay(validatedData);
-        return NutritionDayRepository.update(
-            id,
-            nutritionDay
+    if (!existingDay) {
+        throw new Error(
+            "El día nutricional no existe."
         );
     }
+
+    const validatedData =
+        NutritionDayValidator.validateUpdate({
+            ...data,
+            nutritionPlanId: existingDay.nutritionPlanId
+        });
+
+    const nutritionDay =
+        new NutritionDay({
+            ...validatedData,
+            nutritionPlanId: existingDay.nutritionPlanId
+        });
+
+    return NutritionDayRepository.update(
+        id,
+        nutritionDay
+    );
+}
 }

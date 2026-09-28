@@ -76,5 +76,10 @@ export const nutritionDayFoodQueries = {
             estimated_calories = ?,
             notes = ?
         WHERE id = ?
+    `,
+
+    delete: `
+    DELETE FROM nutrition_day_foods
+    WHERE id = ?
     `
 };

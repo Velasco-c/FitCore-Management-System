@@ -54,26 +54,57 @@ export class ProgressRecordService {
             recordDate
         );
     }
+
+    static async findByClientPlanId(clientPlanId) {
+    return ProgressRecordRepository.findByClientPlanId(
+        clientPlanId
+    );
+    }
+
     static async findAll() {
         return ProgressRecordRepository.findAll();
     }
 
     static async update(id, data) {
-        const existingRecord =
-            await ProgressRecordRepository.findById(id);
-        if (!existingRecord) {
-            throw new Error(
-                "El registro de progreso no existe."
-            );
-        }
+    const existingRecord =
+        await ProgressRecordRepository.findById(id);
 
-        const validatedData =
-            ProgressRecordValidator.validateUpdate(data);
-        const progressRecord =
-            new ProgressRecord(validatedData);
-        return ProgressRecordRepository.update(
-            id,
-            progressRecord
+    if (!existingRecord) {
+        throw new Error(
+            "El registro de progreso no existe."
         );
+    }
+
+    const validatedData =
+        ProgressRecordValidator.validateUpdate({
+            ...data,
+            clientPlanId: existingRecord.clientPlanId
+        });
+
+    const existingRecordForDate =
+        await ProgressRecordRepository.findByClientPlanAndDate(
+            existingRecord.clientPlanId,
+            validatedData.recordDate
+        );
+
+    if (
+        existingRecordForDate &&
+        existingRecordForDate.id !== Number(id)
+    ) {
+        throw new Error(
+            "Ya existe un registro de progreso para esa fecha."
+        );
+    }
+
+    const progressRecord =
+        new ProgressRecord({
+            ...validatedData,
+            clientPlanId: existingRecord.clientPlanId
+        });
+
+    return ProgressRecordRepository.update(
+        id,
+        progressRecord
+    );
     }
 }

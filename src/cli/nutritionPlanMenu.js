@@ -14,7 +14,8 @@ async function getNutritionPlanData() {
         {
             type: 'input',
             name: 'clientPlanId',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         },
         {
             type: 'input',
@@ -29,7 +30,8 @@ async function getNutritionPlanData() {
         {
             type: 'input',
             name: 'dailyCalorieTarget',
-            message: 'Objetivo diario de calorías:'
+            message: 'Objetivo diario de calorías (opcional):',
+            filter: value => value ? Number(value) : null
         },
         {
             type: 'input',
@@ -77,7 +79,8 @@ async function findById() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del plan nutricional:'
+            message: 'ID del plan nutricional:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -107,7 +110,8 @@ async function findByClientPlan() {
         {
             type: 'input',
             name: 'clientPlanId',
-            message: 'ID de la asignación:'
+            message: 'ID de la asignación:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -127,7 +131,8 @@ async function update() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del plan nutricional:'
+            message: 'ID del plan nutricional:',
+            filter: value => Number(value)
         }
     ]);
 
@@ -151,7 +156,8 @@ async function updateStatus() {
         {
             type: 'input',
             name: 'id',
-            message: 'ID del plan nutricional:'
+            message: 'ID del plan nutricional:',
+            filter: value => Number(value)
         },
         {
             type: 'select',

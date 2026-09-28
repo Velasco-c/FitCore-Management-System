@@ -35,22 +35,38 @@ export class FinancialTransactionService {
         return FinancialTransactionRepository.findAll();
     }
 
-    static async update(id, data) {
-        const existingTransaction =
-            await FinancialTransactionRepository.findById(id);
-        if (!existingTransaction) {
-            throw new Error(
-                "La transacción financiera no existe."
-            );
-        }
-        const validatedData =
-            FinancialTransactionValidator.validateUpdate(data);
-        const transaction =
-            new FinancialTransaction(validatedData);
-        return FinancialTransactionRepository.update(
-            id,
-            transaction
+    static async findByClientPlanId(clientPlanId) {
+    return FinancialTransactionRepository.findByClientPlanId(
+        clientPlanId
+    );
+    }
+
+    static async findByType(type) {
+        return FinancialTransactionRepository.findByType(
+            type
         );
+    }
+
+    static async update(id, data) {
+    const existingTransaction =
+        await FinancialTransactionRepository.findById(id);
+
+    if (!existingTransaction) {
+        throw new Error(
+            "La transacción financiera no existe."
+        );
+    }
+
+    const validatedData =
+        FinancialTransactionValidator.validateUpdate(data);
+
+    const transaction =
+        new FinancialTransaction(validatedData);
+
+    return FinancialTransactionRepository.update(
+        id,
+        transaction
+    );
     }
 
     static async updateStatus(id, status) {

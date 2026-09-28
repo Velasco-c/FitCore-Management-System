@@ -19,3 +19,7 @@ export async function updateFood(id, data) {
 export async function deactivateFood(id) {
     return FoodService.deactivate(id);
 }
+
+export async function findFoodByName(name) {
+    return FoodService.findByName(name);
+}

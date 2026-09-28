@@ -86,6 +86,21 @@ export const financialTransactionQueries = {
         ORDER BY transaction_date DESC
     `,
 
+    update: `
+    UPDATE financial_transactions
+    SET
+        client_plan_id = ?,
+        type = ?,
+        category = ?,
+        amount = ?,
+        transaction_date = ?,
+        payment_method = ?,
+        description = ?,
+        reference = ?,
+        status = ?
+    WHERE id = ?
+    `,
+
     updateStatus: `
         UPDATE financial_transactions
         SET

@@ -23,3 +23,19 @@ export async function updateNutritionDayFood(id, data) {
 export async function deleteNutritionDayFood(id) {
     return NutritionDayFoodService.delete(id);
 }
+
+export async function findNutritionDayFoodsByNutritionDayId(
+    nutritionDayId
+) {
+    return NutritionDayFoodService.findByNutritionDayId(
+        nutritionDayId
+    );
+}
+
+export async function findNutritionDayFoodsByFoodId(
+    foodId
+) {
+    return NutritionDayFoodService.findByFoodId(
+        foodId
+    );
+}
