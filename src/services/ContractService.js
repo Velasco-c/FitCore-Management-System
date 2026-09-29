@@ -1,19 +1,19 @@
+import { pool } from "../database/connection.js";
 import { Contract } from "../models/Contract.js";
 import { ContractRepository } from "../repositories/ContractRepository.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
 
 export class ContractService {
 
-    static async create(data) {
+    static async create(data, connection = pool) {
         const clientPlan =
             await ClientPlanRepository.findById(
-                data.clientPlanId
+                data.clientPlanId,
+                connection
             );
 
         if (!clientPlan) {
-            throw new Error(
-                "La asignación del plan no existe."
-            );
+            throw new Error("La asignación del plan no existe.");
         }
 
         if (clientPlan.status === "CANCELLED") {
@@ -24,17 +24,15 @@ export class ContractService {
 
         const existingContract =
             await ContractRepository.findByClientPlanId(
-                data.clientPlanId
+                data.clientPlanId,
+                connection
             );
-        if (existingContract) {
-            throw new Error(
-                "La asignación ya tiene un contrato."
-            );
-        }
-        const contract =
-            new Contract(data);
 
-        return ContractRepository.create(contract);
+        if (existingContract) {
+            throw new Error("La asignación ya tiene un contrato.");
+        }
+
+        return ContractRepository.create(new Contract(data), connection);
     }
 
     static async findById(id) {
@@ -42,15 +40,11 @@ export class ContractService {
     }
 
     static async findByClientPlanId(clientPlanId) {
-        return ContractRepository.findByClientPlanId(
-            clientPlanId
-        );
+        return ContractRepository.findByClientPlanId(clientPlanId);
     }
 
     static async findByNumber(contractNumber) {
-        return ContractRepository.findByNumber(
-            contractNumber
-        );
+        return ContractRepository.findByNumber(contractNumber);
     }
 
     static async findAll() {
@@ -58,34 +52,27 @@ export class ContractService {
     }
 
     static async update(id, data) {
-        const existingContract =
-            await ContractRepository.findById(id);
+        const existingContract = await ContractRepository.findById(id);
+
         if (!existingContract) {
             throw new Error("El contrato no existe.");
         }
-        const updatedData = {
+
+        const contract = new Contract({
             ...data,
             clientPlanId: existingContract.clientPlanId
-        };
+        });
 
-        const contract =
-            new Contract(updatedData);
-
-        return ContractRepository.update(
-            id,
-            contract
-        );
+        return ContractRepository.update(id, contract);
     }
 
     static async updateStatus(id, status) {
-        const existingContract =
-            await ContractRepository.findById(id);
+        const existingContract = await ContractRepository.findById(id);
+
         if (!existingContract) {
             throw new Error("El contrato no existe.");
         }
-        return ContractRepository.updateStatus(
-            id,
-            status
-        );
+
+        return ContractRepository.updateStatus(id, status);
     }
 }

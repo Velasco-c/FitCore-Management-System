@@ -6,7 +6,7 @@ import {
     createClientPlan,
     cancelClientPlan
 } from "../../src/commands/clientPlanCommands.js";
-import { createContract } from "../../src/commands/contractCommands.js";
+import { findContractByClientPlanId } from "../../src/commands/contractCommands.js";
 import { createFinancialTransaction } from "../../src/commands/financialCommands.js";
 import { createFood, findFoodByName } from "../../src/commands/foodCommands.js";
 import { createNutritionPlan } from "../../src/commands/nutritionPlanCommands.js";
@@ -159,6 +159,9 @@ try {
                 status: scenario.status === "CANCELLED" ? "ACTIVE" : scenario.status,
                 agreedPrice,
                 goal,
+                conditions:
+                    "Asistencia mínima de 3 sesiones por semana. " +
+                    "Cancelación con 7 días de aviso.",
                 cancelledAt: null,
                 cancellationReason: null
             })
@@ -180,22 +183,21 @@ try {
 
     const usable = plans.filter(p => p.status !== "CANCELLED");
 
-    let contractSeq = 1;
-    for (const plan of usable) {
-        const number = `FC-${TAG}-${String(contractSeq++).padStart(3, "0")}`;
-        await step("contracts", number, () =>
-            createContract({
-                clientPlanId: plan.id,
-                contractNumber: number,
-                conditions:
-                    "Asistencia mínima de 3 sesiones por semana. " +
-                    "Cancelación con 7 días de aviso.",
-                startDate: plan.start,
-                endDate: plan.endDate,
-                price: plan.agreedPrice,
-                status: plan.status
-            })
-        );
+    // Los contratos los genera automáticamente ClientPlanService.create
+    // (y los cancela ClientPlanService.cancel). Aquí solo se verifican.
+    for (const plan of plans) {
+        await step("contracts", `plan ${plan.id}`, async () => {
+            const contract = await findContractByClientPlanId(plan.id);
+            if (!contract) {
+                throw new Error("No se generó el contrato automático.");
+            }
+            if (contract.status !== plan.status) {
+                throw new Error(
+                    `Contrato ${contract.status}, se esperaba ${plan.status}.`
+                );
+            }
+            return contract.id;
+        });
     }
 
     let pay = 0;

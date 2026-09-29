@@ -9,6 +9,7 @@ import {
     updateClientPlan,
     cancelClientPlan
 } from '../commands/clientPlanCommands.js';
+import { findContractByClientPlanId } from '../commands/contractCommands.js';
 
 async function getClientPlanData({ isUpdate = false } = {}) {
     return inquirer.prompt([
@@ -72,7 +73,8 @@ async function getClientPlanData({ isUpdate = false } = {}) {
         {
             type: 'input',
             name: 'conditions',
-            message: 'Condiciones del contrato:'
+            message: 'Condiciones del contrato (se genera automáticamente):',
+            when: answers => !isUpdate && answers.status !== 'CANCELLED'
         },
         {
             type: 'input',
@@ -92,10 +94,17 @@ async function getClientPlanData({ isUpdate = false } = {}) {
 async function create() {
     const data = await getClientPlanData();
 
-    const clientPlan = await createClientPlan(data);
+    const clientPlanId = await createClientPlan(data);
+    const clientPlan = await findClientPlanById(clientPlanId);
+    const contract = await findContractByClientPlanId(clientPlanId);
 
     console.log('\nPlan asignado correctamente.');
     console.table([clientPlan]);
+
+    if (contract) {
+        console.log('Contrato generado automáticamente:');
+        console.table([contract]);
+    }
 }
 
 async function findById() {
@@ -148,15 +157,15 @@ async function findActive() {
         }
     ]);
 
-    const clientPlan =
+    const activePlans =
         await findActiveClientPlan(clientId);
 
-    if (!clientPlan) {
+    if (!activePlans.length) {
         console.log('\nEl cliente no tiene un plan activo.');
         return;
     }
 
-    console.table([clientPlan]);
+    console.table(activePlans);
 }
 
 async function findAll() {
@@ -189,11 +198,10 @@ async function update() {
 
     const data = await getClientPlanData({ isUpdate: true });
 
-    const clientPlan =
-        await updateClientPlan(id, data);
+    await updateClientPlan(id, data);
 
     console.log('\nAsignación actualizada correctamente.');
-    console.table([clientPlan]);
+    console.table([await findClientPlanById(id)]);
 }
 
 async function cancel() {

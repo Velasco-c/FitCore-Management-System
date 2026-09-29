@@ -16,6 +16,7 @@ export class ClientPlanValidator {
             status = "ACTIVE",
             agreedPrice,
             goal = null,
+            conditions = null,
             cancelledAt = null,
             cancellationReason = null
         } = data;
@@ -27,6 +28,7 @@ export class ClientPlanValidator {
         this.validateDateRange(startDate, endDate);
         this.validateStatus(status);
         this.validatePrice(agreedPrice);
+        this.validateConditions(status, conditions);
         this.validateCancellationConsistency(
             status,
             cancelledAt,
@@ -41,6 +43,7 @@ export class ClientPlanValidator {
             status,
             agreedPrice,
             goal,
+            conditions: conditions?.trim() ?? null,
             cancelledAt,
             cancellationReason: cancellationReason?.trim() ?? null
         };
@@ -80,6 +83,18 @@ export class ClientPlanValidator {
             cancelledAt,
             cancellationReason: cancellationReason?.trim() ?? null
         };
+    }
+
+    // Todo plan que no nace cancelado genera un contrato automático,
+    // y el contrato exige condiciones.
+    static validateConditions(status, conditions) {
+        if (status === "CANCELLED") return;
+
+        if (typeof conditions !== "string" || !conditions.trim()) {
+            throw new Error(
+                "Las condiciones del contrato son obligatorias."
+            );
+        }
     }
 
     static validateCancellation(cancelledAt, cancellationReason) {

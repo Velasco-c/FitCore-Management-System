@@ -82,6 +82,32 @@ async function findAll() {
     console.table(contracts);
 }
 
+async function getContractData() {
+    return inquirer.prompt([
+        { type: 'input', name: 'contractNumber', message: 'Número de contrato:' },
+        { type: 'input', name: 'conditions', message: 'Condiciones:' },
+        { type: 'input', name: 'startDate', message: 'Fecha de inicio (YYYY-MM-DD):' },
+        { type: 'input', name: 'endDate', message: 'Fecha de fin (YYYY-MM-DD):' },
+        {
+            type: 'input',
+            name: 'price',
+            message: 'Precio:',
+            filter: value => Number(value)
+        },
+        {
+            type: 'select',
+            name: 'status',
+            message: 'Estado:',
+            choices: [
+                { name: 'Activo', value: 'ACTIVE' },
+                { name: 'Finalizado', value: 'COMPLETED' },
+                { name: 'Cancelado', value: 'CANCELLED' },
+                { name: 'Expirado', value: 'EXPIRED' }
+            ]
+        }
+    ]);
+}
+
 async function update() {
     const { id } = await inquirer.prompt([
         {
@@ -99,7 +125,7 @@ async function update() {
         return;
     }
 
-    const data = await getContractData({ isUpdate: true });
+    const data = await getContractData();
 
     const contract = await updateContract(id, data);
 
@@ -131,6 +157,10 @@ async function updateStatusAction() {
                 {
                     name: 'Cancelado',
                     value: 'CANCELLED'
+                },
+                {
+                    name: 'Expirado',
+                    value: 'EXPIRED'
                 }
             ]
         }

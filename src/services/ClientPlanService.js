@@ -2,11 +2,16 @@ import { ClientPlan } from "../models/ClientPlan.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
 import { ClientRepository } from "../repositories/ClientRepository.js";
 import { TrainingPlanRepository } from "../repositories/TrainingPlanRepository.js";
+import { ContractRepository } from "../repositories/ContractRepository.js";
 import { ContractService } from "./ContractService.js";
+import { pool } from "../database/connection.js";
+
+const DEFAULT_CONDITIONS =
+    "Condiciones generales del servicio de entrenamiento FitCore.";
 
 export class ClientPlanService {
 
-    static async create(data, conditions) {
+    static async create(data) {
         const client =
             await ClientRepository.findById(
                 data.clientId
@@ -39,36 +44,57 @@ export class ClientPlanService {
             );
         }
 
-        const activePlans =
-            await ClientPlanRepository.findActiveByClientId(
-                data.clientId
-            );
+        // Solo un plan ACTIVE por cliente; los históricos no compiten.
+        if (data.status === "ACTIVE") {
+            const activePlans =
+                await ClientPlanRepository.findActiveByClientId(
+                    data.clientId
+                );
 
-        if (activePlans.length > 0) {
-            throw new Error(
-                "El cliente ya tiene un plan de entrenamiento activo."
-            );
+            if (activePlans.length > 0) {
+                throw new Error(
+                    "El cliente ya tiene un plan de entrenamiento activo."
+                );
+            }
         }
 
-        const clientPlan =
-            new ClientPlan(data);
+        const connection = await pool.getConnection();
 
-        const clientPlanId =
-            await ClientPlanRepository.create(clientPlan);
+        try {
+            await connection.beginTransaction();
 
-        if (data.status !== "CANCELLED") {
-            await ContractService.create({
-                clientPlanId,
-                contractNumber: `CT-${String(clientPlanId).padStart(5, "0")}`,
-                conditions,
-                startDate: data.startDate,
-                endDate: data.endDate,
-                price: data.agreedPrice,
-                status: data.status
-            });
+            const clientPlanId =
+                await ClientPlanRepository.create(
+                    new ClientPlan(data),
+                    connection
+                );
+
+            // Contrato automático (no aplica a asignaciones canceladas).
+            if (data.status !== "CANCELLED") {
+                await ContractService.create(
+                    {
+                        clientPlanId,
+                        contractNumber:
+                            `CT-${String(clientPlanId).padStart(5, "0")}`,
+                        conditions:
+                            data.conditions?.trim() || DEFAULT_CONDITIONS,
+                        startDate: data.startDate,
+                        endDate: data.endDate,
+                        price: data.agreedPrice,
+                        status: data.status
+                    },
+                    connection
+                );
+            }
+
+            await connection.commit();
+            return clientPlanId;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
         }
-
-        return clientPlanId;
     }
 
     static async findById(id) {
@@ -157,11 +183,56 @@ export class ClientPlanService {
                 clientId: existingPlan.clientId
             });
 
-        return ClientPlanRepository.update(
-            id,
-            clientPlan
-        );
+        const connection = await pool.getConnection();
 
+        try {
+            await connection.beginTransaction();
+
+            const affected = await ClientPlanRepository.update(
+                id,
+                clientPlan,
+                connection
+            );
+
+            const contract =
+                await ContractRepository.findByClientPlanId(id, connection);
+
+            if (contract) {
+                await ContractRepository.update(
+                    contract.id,
+                    {
+                        ...contract,
+                        startDate: data.startDate,
+                        endDate: data.endDate,
+                        price: data.agreedPrice,
+                        status: data.status
+                    },
+                    connection
+                );
+            } else if (data.status !== "CANCELLED") {
+                await ContractService.create(
+                    {
+                        clientPlanId: id,
+                        contractNumber:
+                            `CT-${String(id).padStart(5, "0")}`,
+                        conditions: DEFAULT_CONDITIONS,
+                        startDate: data.startDate,
+                        endDate: data.endDate,
+                        price: data.agreedPrice,
+                        status: data.status
+                    },
+                    connection
+                );
+            }
+
+            await connection.commit();
+            return affected;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
     }
 
     static async cancel(id, cancelledAt, cancellationReason) {
@@ -180,10 +251,36 @@ export class ClientPlanService {
             );
         }
 
-        return ClientPlanRepository.cancel(
-            id,
-            cancelledAt,
-            cancellationReason
-        );
+        const connection = await pool.getConnection();
+
+        try {
+            await connection.beginTransaction();
+
+            const affected = await ClientPlanRepository.cancel(
+                id,
+                cancelledAt,
+                cancellationReason,
+                connection
+            );
+
+            const contract =
+                await ContractRepository.findByClientPlanId(id, connection);
+
+            if (contract) {
+                await ContractRepository.updateStatus(
+                    contract.id,
+                    "CANCELLED",
+                    connection
+                );
+            }
+
+            await connection.commit();
+            return affected;
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
     }
 }
