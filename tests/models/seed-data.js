@@ -1,13 +1,3 @@
-// ============================================================
-// SEED DE DATOS SINTÉTICOS - FITCORE
-// Solo INSERTA datos. Pasa por commands (validators + services),
-// así que también prueba el flujo real de la aplicación.
-//
-// Uso:  node tests/models/seed-data.js
-// Es re-ejecutable: cada corrida usa un TAG único para emails,
-// nombres de planes y números de contrato (campos UNIQUE).
-// ============================================================
-
 import { pool } from "../../src/database/connection.js";
 
 import { createClient } from "../../src/commands/clientCommands.js";
@@ -24,13 +14,9 @@ import { createNutritionDay } from "../../src/commands/nutritionDayCommands.js";
 import { createNutritionDayFood } from "../../src/commands/nutritionDayFoodCommands.js";
 import { createProgressRecord } from "../../src/commands/progressCommands.js";
 
-// ------------------------------------------------------------
-// UTILIDADES
-// ------------------------------------------------------------
 
 const TAG = String(Date.now()).slice(-6);
 
-// PRNG determinista (mismos datos numéricos en cada corrida)
 function mulberry32(seed) {
     return function () {
         seed |= 0;
@@ -68,9 +54,7 @@ async function step(entity, label, fn) {
     }
 }
 
-// ------------------------------------------------------------
-// DATOS BASE
-// ------------------------------------------------------------
+
 
 const CLIENTS = [
     ["Andrea", "Morales", "FEMALE", "1994-03-12"],
@@ -90,7 +74,6 @@ const TRAINING_PLANS = [
     ["Acondicionamiento Funcional", 6, "BEGINNER", 380, "Mejorar condición física"]
 ];
 
-// scenario: cómo termina cada asignación
 const CLIENT_PLANS = [
     { client: 0, training: 0, start: "2026-08-03", status: "ACTIVE" },
     { client: 1, training: 1, start: "2026-07-20", status: "ACTIVE" },
@@ -114,16 +97,12 @@ const FOODS = [
 const MEALS = ["BREAKFAST", "LUNCH", "SNACK", "DINNER"];
 const PAYMENT_METHODS = ["CARD", "CASH", "TRANSFER"];
 
-// ------------------------------------------------------------
-// EJECUCIÓN
-// ------------------------------------------------------------
 
 console.log("========================================");
 console.log(`SEED DE DATOS SINTÉTICOS (TAG ${TAG})`);
 console.log("========================================");
 
 try {
-    // 1. CLIENTES
     const clientIds = [];
     for (const [firstName, lastName, gender, birthDate] of CLIENTS) {
         const id = await step("clients", `${firstName} ${lastName}`, () =>
@@ -143,7 +122,6 @@ try {
         clientIds.push(id);
     }
 
-    // 2. PLANES DE ENTRENAMIENTO
     const trainingPlanIds = [];
     for (const [name, durationWeeks, level, price, goal] of TRAINING_PLANS) {
         const id = await step("training_plans", name, () =>
@@ -160,7 +138,6 @@ try {
         trainingPlanIds.push(id);
     }
 
-    // 3. ASIGNACIONES (client_plans)
     const plans = [];
     for (const scenario of CLIENT_PLANS) {
         const [, weeks, , price, goal] = TRAINING_PLANS[scenario.training];
@@ -188,7 +165,6 @@ try {
         );
         if (!id) continue;
 
-        // Las canceladas pasan por el flujo real de cancelación
         if (scenario.status === "CANCELLED") {
             await step("client_plans_cancelled", `plan ${id}`, () =>
                 cancelClientPlan(
@@ -204,7 +180,6 @@ try {
 
     const usable = plans.filter(p => p.status !== "CANCELLED");
 
-    // 4. CONTRATOS (uno por asignación no cancelada)
     let contractSeq = 1;
     for (const plan of usable) {
         const number = `FC-${TAG}-${String(contractSeq++).padStart(3, "0")}`;
@@ -223,7 +198,6 @@ try {
         );
     }
 
-    // 5. TRANSACCIONES FINANCIERAS
     let pay = 0;
     for (const plan of plans) {
         await step("financial_transactions", `ingreso plan ${plan.id}`, () =>
@@ -263,7 +237,6 @@ try {
         );
     }
 
-    // 6. ALIMENTOS (se reutilizan si ya existen: name es UNIQUE)
     const foods = [];
     for (const [name, kcal] of FOODS) {
         const existing = await findFoodByName(name).catch(() => null);
@@ -280,8 +253,6 @@ try {
         if (id) foods.push({ id, kcal });
     }
 
-    // 7. PLANES NUTRICIONALES + DÍAS + ALIMENTOS POR DÍA
-    //    (solo para las asignaciones ACTIVE)
     const activePlans = usable.filter(p => p.status === "ACTIVE").slice(0, 4);
     for (const plan of activePlans) {
         const nutritionPlanId = await step("nutrition_plans", `plan ${plan.id}`, () =>
@@ -325,7 +296,6 @@ try {
         }
     }
 
-    // 8. REGISTROS DE PROGRESO (semanales, salvo canceladas)
     for (const plan of usable) {
         let weight = between(62, 95);
         let fat = between(16, 30);

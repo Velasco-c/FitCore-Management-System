@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "CLI para la gestión integral de clientes, entrenamiento, nutrición y finanzas de un entrenador personal o gimnasio.",
   "main": "src/app.js",
+  "type": "module",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
     "start": "node src/app.js",
-    "dev": "node --watch src/app.js"
+    "dev": "node --watch src/app.js",
+    "seed": "node tests/models/seed-data.js",
+    "test": "jest"
   },
   "directories": {
     "doc": "docs",
@@ -19,28 +19,29 @@
     "url": "git+https://github.com/Velasco-c/FitCore-Management-System.git"
   },
   "keywords": [
-      "nodejs",
-      "mysql",
-      "cli",
-      "oop",
-      "solid",
-      "fitness",
-      "gym"
+    "nodejs",
+    "mysql",
+    "cli",
+    "oop",
+    "solid",
+    "fitness",
+    "gym"
   ],
   "author": "Velasco-c",
   "license": "ISC",
-  "type": "module",
+  "engines": {
+    "node": "^20.17.0 || ^22.13.0 || >=23.5.0"
+  },
   "bugs": {
     "url": "https://github.com/Velasco-c/FitCore-Management-System/issues"
   },
   "homepage": "https://github.com/Velasco-c/FitCore-Management-System#readme",
   "dependencies": {
-    "chalk": "^6.0.0",
     "dotenv": "^18.0.2",
     "inquirer": "^14.2.2",
     "mysql2": "^3.24.4"
   },
   "devDependencies": {
-    "jest": "^30.5.2"
+    "jest": "^29.7.0"
   }
 }
