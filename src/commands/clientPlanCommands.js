@@ -3,7 +3,10 @@ import { ClientPlanValidator } from '../validators/ClientPlanValidator.js';
 
 export async function createClientPlan(data) {
     const validatedData = ClientPlanValidator.validateCreate(data);
-    return ClientPlanService.create(validatedData);
+    return ClientPlanService.create(
+        validatedData,
+        data.conditions
+    );
 }
 
 export async function findClientPlanById(id) {

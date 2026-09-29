@@ -2,10 +2,11 @@ import { ClientPlan } from "../models/ClientPlan.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
 import { ClientRepository } from "../repositories/ClientRepository.js";
 import { TrainingPlanRepository } from "../repositories/TrainingPlanRepository.js";
+import { ContractService } from "./ContractService.js";
 
 export class ClientPlanService {
 
-    static async create(data) {
+    static async create(data, conditions) {
         const client =
             await ClientRepository.findById(
                 data.clientId
@@ -51,7 +52,23 @@ export class ClientPlanService {
 
         const clientPlan =
             new ClientPlan(data);
-        return ClientPlanRepository.create(clientPlan);
+
+        const clientPlanId =
+            await ClientPlanRepository.create(clientPlan);
+
+        if (data.status !== "CANCELLED") {
+            await ContractService.create({
+                clientPlanId,
+                contractNumber: `CT-${String(clientPlanId).padStart(5, "0")}`,
+                conditions,
+                startDate: data.startDate,
+                endDate: data.endDate,
+                price: data.agreedPrice,
+                status: data.status
+            });
+        }
+
+        return clientPlanId;
     }
 
     static async findById(id) {

@@ -71,6 +71,11 @@ async function getClientPlanData({ isUpdate = false } = {}) {
         },
         {
             type: 'input',
+            name: 'conditions',
+            message: 'Condiciones del contrato:'
+        },
+        {
+            type: 'input',
             name: 'cancelledAt',
             message: 'Fecha de cancelación (YYYY-MM-DD HH:mm:ss):',
             when: answers => answers.status === 'CANCELLED'

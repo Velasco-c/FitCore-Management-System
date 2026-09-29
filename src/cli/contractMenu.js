@@ -1,7 +1,6 @@
 import inquirer from 'inquirer';
 
 import {
-    createContract,
     findContractById,
     findContractByClientPlanId,
     findContractByNumber,
@@ -10,75 +9,6 @@ import {
     updateContractStatus
 } from '../commands/contractCommands.js';
 
-async function getContractData({ isUpdate = false } = {}) {
-    return inquirer.prompt([
-        {
-            type: 'input',
-            name: 'clientPlanId',
-            message: 'ID de la asignación:',
-            when: () => !isUpdate,
-            filter: value => Number(value)
-        },
-        {
-            type: 'input',
-            name: 'contractNumber',
-            message: 'Número de contrato:'
-        },
-        {
-            type: 'input',
-            name: 'conditions',
-            message: 'Condiciones:'
-        },
-        {
-            type: 'input',
-            name: 'startDate',
-            message: 'Fecha de inicio (YYYY-MM-DD):'
-        },
-        {
-            type: 'input',
-            name: 'endDate',
-            message: 'Fecha de finalización (YYYY-MM-DD):'
-        },
-        {
-            type: 'input',
-            name: 'price',
-            message: 'Precio:',
-            filter: value => Number(value)
-        },
-        {
-            type: 'select',
-            name: 'status',
-            message: 'Estado:',
-            choices: [
-                {
-                    name: 'Activo',
-                    value: 'ACTIVE'
-                },
-                {
-                    name: 'Finalizado',
-                    value: 'COMPLETED'
-                },
-                {
-                    name: 'Cancelado',
-                    value: 'CANCELLED'
-                },
-                {
-                    name: 'Expirado',
-                    value: 'EXPIRED'
-                }
-            ]
-        }
-    ]);
-}
-
-async function create() {
-    const data = await getContractData();
-
-    const contract = await createContract(data);
-
-    console.log('\nContrato creado correctamente.');
-    console.table([contract]);
-}
 
 async function findById() {
     const { id } = await inquirer.prompt([
@@ -222,10 +152,6 @@ export async function showContractMenu() {
                 message: 'Gestión de contratos:',
                 choices: [
                     {
-                        name: 'Crear contrato',
-                        value: 'create'
-                    },
-                    {
                         name: 'Consultar contrato por ID',
                         value: 'findById'
                     },
@@ -259,10 +185,6 @@ export async function showContractMenu() {
 
         try {
             switch (option) {
-                case 'create':
-                    await create();
-                    break;
-
                 case 'findById':
                     await findById();
                     break;
