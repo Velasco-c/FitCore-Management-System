@@ -1,13 +1,10 @@
 import { Food } from "../models/Food.js";
 import { FoodRepository } from "../repositories/FoodRepository.js";
-import { FoodValidator } from "../validators/FoodValidator.js";
 
 export class FoodService {
 
     static async create(data) {
-        const validatedData =
-            FoodValidator.validateCreate(data);
-        const food = new Food(validatedData);
+        const food = new Food(data);
         return FoodRepository.create(food);
     }
 
@@ -16,7 +13,7 @@ export class FoodService {
     }
 
     static async findByName(name) {
-    return FoodRepository.findByName(name);
+        return FoodRepository.findByName(name);
     }
 
     static async findAll() {
@@ -26,15 +23,15 @@ export class FoodService {
     static async update(id, data) {
         const existingFood =
             await FoodRepository.findById(id);
+
         if (!existingFood) {
             throw new Error(
                 "El alimento no existe."
             );
         }
 
-        const validatedData =
-            FoodValidator.validateUpdate(data);
-        const food = new Food(validatedData);
+        const food = new Food(data);
+
         return FoodRepository.update(id, food);
     }
 

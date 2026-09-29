@@ -1,8 +1,20 @@
+import { isFiniteNumber, isPositiveInteger } from "../utils/validation.js";
+
 export class NutritionDayFoodValidator {
 
     static validateCreate(data = {}) {
-        const {
+        const { nutritionDayId } = data;
+
+        this.validateId(nutritionDayId, "nutritionDayId");
+
+        return {
             nutritionDayId,
+            ...this.validateUpdate(data)
+        };
+    }
+
+    static validateUpdate(data = {}) {
+        const {
             foodId,
             mealType,
             quantity,
@@ -10,14 +22,12 @@ export class NutritionDayFoodValidator {
             notes = null
         } = data;
 
-        this.validateId(nutritionDayId, "nutritionDayId");
         this.validateId(foodId, "foodId");
         this.validateMealType(mealType);
         this.validatePositiveNumber(quantity, "quantity");
         this.validateCalories(estimatedCalories);
 
         return {
-            nutritionDayId,
             foodId,
             mealType,
             quantity,
@@ -26,12 +36,8 @@ export class NutritionDayFoodValidator {
         };
     }
 
-    static validateUpdate(data = {}) {
-        return this.validateCreate(data);
-    }
-
     static validateId(value, field) {
-        if (!Number.isInteger(value) || value <= 0) {
+        if (!isPositiveInteger(value)) {
             throw new Error(`${field} debe ser un ID válido.`);
         }
     }
@@ -45,7 +51,7 @@ export class NutritionDayFoodValidator {
     }
 
     static validatePositiveNumber(value, field) {
-        if (typeof value !== "number" || value <= 0) {
+        if (!isFiniteNumber(value) || value <= 0) {
             throw new Error(`${field} debe ser mayor que 0.`);
         }
     }
@@ -53,7 +59,7 @@ export class NutritionDayFoodValidator {
     static validateCalories(value) {
         if (
             value !== null &&
-            (typeof value !== "number" || value < 0)
+            (!isFiniteNumber(value) || value < 0)
         ) {
             throw new Error(
                 "estimatedCalories debe ser mayor o igual a 0."

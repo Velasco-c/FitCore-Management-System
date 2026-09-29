@@ -8,12 +8,13 @@ import {
     updateNutritionDay
 } from '../commands/nutritionDayCommands.js';
 
-async function getNutritionDayData() {
+async function getNutritionDayData({ isUpdate = false } = {}) {
     return inquirer.prompt([
         {
             type: 'input',
             name: 'nutritionPlanId',
             message: 'ID del plan nutricional:',
+            when: () => !isUpdate,
             filter: value => Number(value)
         },
         {
@@ -115,7 +116,7 @@ async function update() {
         return;
     }
 
-    const data = await getNutritionDayData();
+    const data = await getNutritionDayData({ isUpdate: true });
 
     const day = await updateNutritionDay(id, data);
 

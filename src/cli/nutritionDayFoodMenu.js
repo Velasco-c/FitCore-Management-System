@@ -9,12 +9,13 @@ import {
     deleteNutritionDayFood
 } from '../commands/nutritionDayFoodCommands.js';
 
-async function getData() {
+async function getData({ isUpdate = false } = {}) {
     return inquirer.prompt([
         {
             type: 'input',
             name: 'nutritionDayId',
             message: 'ID del día nutricional:',
+            when: () => !isUpdate,
             filter: value => Number(value)
         },
         {
@@ -147,7 +148,7 @@ async function update() {
         return;
     }
 
-    const data = await getData();
+    const data = await getData({ isUpdate: true });
 
     const relation =
         await updateNutritionDayFood(id, data);

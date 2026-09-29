@@ -1,15 +1,12 @@
 import { TrainingPlan } from "../models/TrainingPlan.js";
 import { TrainingPlanRepository } from "../repositories/TrainingPlanRepository.js";
-import { TrainingPlanValidator } from "../validators/TrainingPlanValidator.js";
 
 export class TrainingPlanService {
 
     static async create(data) {
-        const validatedData =
-            TrainingPlanValidator.validateCreate(data);
         const existingPlan =
             await TrainingPlanRepository.findByName(
-                validatedData.name
+                data.name
             );
         if (existingPlan) {
             throw new Error(
@@ -17,8 +14,7 @@ export class TrainingPlanService {
             );
         }
 
-        const trainingPlan =
-            new TrainingPlan(validatedData);
+        const trainingPlan = new TrainingPlan(data);
         return TrainingPlanRepository.create(trainingPlan);
     }
 
@@ -42,17 +38,11 @@ export class TrainingPlanService {
                 "El plan de entrenamiento no existe."
             );
         }
-        const validatedData =
-            TrainingPlanValidator.validateUpdate(data);
-
-        if (
-            validatedData.name !== existingPlan.name
-        ) {
+        if (data.name !== existingPlan.name) {
             const planWithName =
                 await TrainingPlanRepository.findByName(
-                    validatedData.name
+                    data.name
                 );
-
             if (
                 planWithName &&
                 planWithName.id !== Number(id)
@@ -63,7 +53,7 @@ export class TrainingPlanService {
             }
         }
         const trainingPlan =
-            new TrainingPlan(validatedData);
+            new TrainingPlan(data);
         return TrainingPlanRepository.update(
             id,
             trainingPlan

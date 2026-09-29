@@ -1,3 +1,5 @@
+import { isPositiveInteger, isValidDate } from "../utils/validation.js";
+
 export class ClientValidator {
 
     static validateCreate(data = {}) {
@@ -33,6 +35,12 @@ export class ClientValidator {
         return this.validateCreate(data);
     }
 
+    static validateId(value, field) {
+        if (!isPositiveInteger(value)) {
+            throw new Error(`${field} debe ser un ID válido.`);
+        }
+    }
+
     static validateName(value, field) {
         if (typeof value !== "string" || !value.trim()) {
             throw new Error(`${field} es obligatorio.`);
@@ -66,7 +74,7 @@ export class ClientValidator {
     static validateDate(value, field) {
         if (value === null) return;
 
-        if (Number.isNaN(Date.parse(value))) {
+        if (!isValidDate(value)) {
             throw new Error(`${field} no es una fecha válida.`);
         }
     }

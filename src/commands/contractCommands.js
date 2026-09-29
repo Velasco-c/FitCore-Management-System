@@ -1,19 +1,27 @@
 import { ContractService } from '../services/ContractService.js';
+import { ContractValidator } from '../validators/ContractValidator.js';
 
 export async function createContract(data) {
-    return ContractService.create(data);
+    const validatedData = ContractValidator.validateCreate(data);
+    return ContractService.create(validatedData);
 }
 
 export async function findContractById(id) {
+    ContractValidator.validateId(id, "id");
     return ContractService.findById(id);
 }
 
 export async function findContractByClientPlanId(clientPlanId) {
+    ContractValidator.validateId(clientPlanId, "clientPlanId");
     return ContractService.findByClientPlanId(clientPlanId);
 }
 
 export async function findContractByNumber(contractNumber) {
-    return ContractService.findByNumber(contractNumber);
+    ContractValidator.validateRequiredString(
+        contractNumber,
+        "contractNumber"
+    );
+    return ContractService.findByNumber(contractNumber.trim());
 }
 
 export async function findAllContracts() {
@@ -21,9 +29,13 @@ export async function findAllContracts() {
 }
 
 export async function updateContract(id, data) {
-    return ContractService.update(id, data);
+    ContractValidator.validateId(id, "id");
+    const validatedData = ContractValidator.validateUpdate(data);
+    return ContractService.update(id, validatedData);
 }
 
 export async function updateContractStatus(id, status) {
+    ContractValidator.validateId(id, "id");
+    ContractValidator.validateStatus(status);
     return ContractService.updateStatus(id, status);
 }

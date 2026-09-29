@@ -9,12 +9,13 @@ import {
     updateNutritionPlanStatus
 } from '../commands/nutritionPlanCommands.js';
 
-async function getNutritionPlanData() {
+async function getNutritionPlanData({ isUpdate = false } = {}) {
     return inquirer.prompt([
         {
             type: 'input',
             name: 'clientPlanId',
             message: 'ID de la asignación:',
+            when: () => !isUpdate,
             filter: value => Number(value)
         },
         {
@@ -143,7 +144,7 @@ async function update() {
         return;
     }
 
-    const data = await getNutritionPlanData();
+    const data = await getNutritionPlanData({ isUpdate: true });
 
     const plan = await updateNutritionPlan(id, data);
 

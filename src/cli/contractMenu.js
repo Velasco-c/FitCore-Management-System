@@ -10,12 +10,13 @@ import {
     updateContractStatus
 } from '../commands/contractCommands.js';
 
-async function getContractData() {
+async function getContractData({ isUpdate = false } = {}) {
     return inquirer.prompt([
         {
             type: 'input',
             name: 'clientPlanId',
             message: 'ID de la asignación:',
+            when: () => !isUpdate,
             filter: value => Number(value)
         },
         {
@@ -168,7 +169,7 @@ async function update() {
         return;
     }
 
-    const data = await getContractData();
+    const data = await getContractData({ isUpdate: true });
 
     const contract = await updateContract(id, data);
 

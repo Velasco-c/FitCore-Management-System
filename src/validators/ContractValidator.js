@@ -1,8 +1,24 @@
+import {
+    isFiniteNumber,
+    isPositiveInteger,
+    isValidDate
+} from "../utils/validation.js";
+
 export class ContractValidator {
 
     static validateCreate(data = {}) {
-        const {
+        const { clientPlanId } = data;
+
+        this.validateId(clientPlanId, "clientPlanId");
+
+        return {
             clientPlanId,
+            ...this.validateUpdate(data)
+        };
+    }
+
+    static validateUpdate(data = {}) {
+        const {
             contractNumber,
             conditions,
             startDate,
@@ -11,7 +27,6 @@ export class ContractValidator {
             status = "ACTIVE"
         } = data;
 
-        this.validateId(clientPlanId, "clientPlanId");
         this.validateRequiredString(contractNumber, "contractNumber");
         this.validateRequiredString(conditions, "conditions");
         this.validateDate(startDate, "startDate");
@@ -21,7 +36,6 @@ export class ContractValidator {
         this.validateStatus(status);
 
         return {
-            clientPlanId,
             contractNumber: contractNumber.trim(),
             conditions,
             startDate,
@@ -31,12 +45,8 @@ export class ContractValidator {
         };
     }
 
-    static validateUpdate(data = {}) {
-        return this.validateCreate(data);
-    }
-
     static validateId(value, field) {
-        if (!Number.isInteger(value) || value <= 0) {
+        if (!isPositiveInteger(value)) {
             throw new Error(`${field} debe ser un ID válido.`);
         }
     }
@@ -48,7 +58,7 @@ export class ContractValidator {
     }
 
     static validateDate(value, field) {
-        if (!value || Number.isNaN(Date.parse(value))) {
+        if (!isValidDate(value)) {
             throw new Error(`${field} no es una fecha válida.`);
         }
     }
@@ -62,7 +72,7 @@ export class ContractValidator {
     }
 
     static validatePrice(price) {
-        if (typeof price !== "number" || price < 0) {
+        if (!isFiniteNumber(price) || price < 0) {
             throw new Error(
                 "El precio debe ser un número mayor o igual a 0."
             );

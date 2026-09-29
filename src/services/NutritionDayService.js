@@ -1,16 +1,15 @@
 import { NutritionDay } from "../models/NutritionDay.js";
+
 import { NutritionDayRepository } from "../repositories/NutritionDayRepository.js";
+
 import { NutritionPlanRepository } from "../repositories/NutritionPlanRepository.js";
-import { NutritionDayValidator } from "../validators/NutritionDayValidator.js";
 
 export class NutritionDayService {
 
     static async create(data) {
-        const validatedData =
-            NutritionDayValidator.validateCreate(data);
         const nutritionPlan =
             await NutritionPlanRepository.findById(
-                validatedData.nutritionPlanId
+                data.nutritionPlanId
             );
         if (!nutritionPlan) {
             throw new Error(
@@ -18,7 +17,7 @@ export class NutritionDayService {
             );
         }
         const nutritionDay =
-            new NutritionDay(validatedData);
+            new NutritionDay(data);
         return NutritionDayRepository.create(
             nutritionDay
         );
@@ -33,15 +32,16 @@ export class NutritionDayService {
     }
 
     static async findByNutritionPlanId(nutritionPlanId) {
-    return NutritionDayRepository.findByNutritionPlanId(
-        nutritionPlanId
-    );
-}
+        return NutritionDayRepository.findByNutritionPlanId(
+            nutritionPlanId
+        );
+    }
 
     static async findByPlanAndDate(
         nutritionPlanId,
         dayDate
     ) {
+
         return NutritionDayRepository.findByPlanAndDate(
             nutritionPlanId,
             dayDate
@@ -49,30 +49,21 @@ export class NutritionDayService {
     }
 
     static async update(id, data) {
-    const existingDay =
-        await NutritionDayRepository.findById(id);
-
-    if (!existingDay) {
-        throw new Error(
-            "El día nutricional no existe."
+        const existingDay =
+            await NutritionDayRepository.findById(id);
+        if (!existingDay) {
+            throw new Error(
+                "El día nutricional no existe."
+            );
+        }
+        const nutritionDay =
+            new NutritionDay({
+                ...data,
+                nutritionPlanId: existingDay.nutritionPlanId
+            });
+        return NutritionDayRepository.update(
+            id,
+            nutritionDay
         );
     }
-
-    const validatedData =
-        NutritionDayValidator.validateUpdate({
-            ...data,
-            nutritionPlanId: existingDay.nutritionPlanId
-        });
-
-    const nutritionDay =
-        new NutritionDay({
-            ...validatedData,
-            nutritionPlanId: existingDay.nutritionPlanId
-        });
-
-    return NutritionDayRepository.update(
-        id,
-        nutritionDay
-    );
-}
 }

@@ -1,18 +1,12 @@
 import { ProgressRecord } from "../models/ProgressRecord.js";
 import { ProgressRecordRepository } from "../repositories/ProgressRecordRepository.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
-import { ProgressRecordValidator } from "../validators/ProgressRecordValidator.js";
 
 export class ProgressRecordService {
 
     static async create(data) {
-        const validatedData =
-            ProgressRecordValidator.validateCreate(data);
-
         const clientPlan =
-            await ClientPlanRepository.findById(
-                validatedData.clientPlanId
-            );
+            await ClientPlanRepository.findById(data.clientPlanId);
         if (!clientPlan) {
             throw new Error(
                 "La asignación del plan no existe."
@@ -25,8 +19,8 @@ export class ProgressRecordService {
         }
         const existingRecord =
             await ProgressRecordRepository.findByClientPlanAndDate(
-                validatedData.clientPlanId,
-                validatedData.recordDate
+                data.clientPlanId,
+                data.recordDate
             );
         if (existingRecord) {
             throw new Error(
@@ -35,7 +29,7 @@ export class ProgressRecordService {
         }
 
         const progressRecord =
-            new ProgressRecord(validatedData);
+            new ProgressRecord(data);
         return ProgressRecordRepository.create(
             progressRecord
         );
@@ -45,10 +39,7 @@ export class ProgressRecordService {
         return ProgressRecordRepository.findById(id);
     }
 
-    static async findByClientPlanAndDate(
-        clientPlanId,
-        recordDate
-    ) {
+    static async findByClientPlanAndDate(clientPlanId, recordDate) {
         return ProgressRecordRepository.findByClientPlanAndDate(
             clientPlanId,
             recordDate
@@ -56,9 +47,7 @@ export class ProgressRecordService {
     }
 
     static async findByClientPlanId(clientPlanId) {
-    return ProgressRecordRepository.findByClientPlanId(
-        clientPlanId
-    );
+        return ProgressRecordRepository.findByClientPlanId(clientPlanId);
     }
 
     static async findAll() {
@@ -66,45 +55,39 @@ export class ProgressRecordService {
     }
 
     static async update(id, data) {
-    const existingRecord =
-        await ProgressRecordRepository.findById(id);
+        const existingRecord = await ProgressRecordRepository.findById(id);
 
-    if (!existingRecord) {
-        throw new Error(
-            "El registro de progreso no existe."
+        if (!existingRecord) {
+            throw new Error(
+                "El registro de progreso no existe."
+            );
+        }
+
+        const existingRecordForDate =
+            await ProgressRecordRepository.findByClientPlanAndDate(
+                existingRecord.clientPlanId,
+                data.recordDate
+            );
+
+        if (
+            existingRecordForDate &&
+            existingRecordForDate.id !== Number(id)
+        ) {
+            throw new Error(
+                "Ya existe un registro de progreso para esa fecha."
+            );
+        }
+
+        const progressRecord =
+            new ProgressRecord({
+                ...data,
+                clientPlanId: existingRecord.clientPlanId
+            });
+
+        return ProgressRecordRepository.update(
+            id,
+            progressRecord
         );
-    }
 
-    const validatedData =
-        ProgressRecordValidator.validateUpdate({
-            ...data,
-            clientPlanId: existingRecord.clientPlanId
-        });
-
-    const existingRecordForDate =
-        await ProgressRecordRepository.findByClientPlanAndDate(
-            existingRecord.clientPlanId,
-            validatedData.recordDate
-        );
-
-    if (
-        existingRecordForDate &&
-        existingRecordForDate.id !== Number(id)
-    ) {
-        throw new Error(
-            "Ya existe un registro de progreso para esa fecha."
-        );
-    }
-
-    const progressRecord =
-        new ProgressRecord({
-            ...validatedData,
-            clientPlanId: existingRecord.clientPlanId
-        });
-
-    return ProgressRecordRepository.update(
-        id,
-        progressRecord
-    );
     }
 }

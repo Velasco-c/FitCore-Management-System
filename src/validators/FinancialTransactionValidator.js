@@ -1,3 +1,9 @@
+import {
+    isFiniteNumber,
+    isPositiveInteger,
+    isValidDate
+} from "../utils/validation.js";
+
 export class FinancialTransactionValidator {
 
     static validateCreate(data = {}) {
@@ -38,11 +44,14 @@ export class FinancialTransactionValidator {
         return this.validateCreate(data);
     }
 
+    static validateId(value, field) {
+        if (!isPositiveInteger(value)) {
+            throw new Error(`${field} debe ser un ID válido.`);
+        }
+    }
+
     static validateClientPlanId(value) {
-        if (
-            value !== null &&
-            (!Number.isInteger(value) || value <= 0)
-        ) {
+        if (value !== null && !isPositiveInteger(value)) {
             throw new Error(
                 "clientPlanId debe ser un ID válido."
             );
@@ -71,13 +80,13 @@ export class FinancialTransactionValidator {
     }
 
     static validateAmount(amount) {
-        if (typeof amount !== "number" || amount <= 0) {
+        if (!isFiniteNumber(amount) || amount <= 0) {
             throw new Error("El monto debe ser mayor que 0.");
         }
     }
 
     static validateDate(value) {
-        if (!value || Number.isNaN(Date.parse(value))) {
+        if (!isValidDate(value)) {
             throw new Error("transactionDate no es una fecha válida.");
         }
     }
@@ -94,9 +103,7 @@ export class FinancialTransactionValidator {
     }
 
     static validateStatus(status) {
-        if (
-            !["PENDING", "COMPLETED", "CANCELLED"].includes(status)
-        ) {
+        if (!["PENDING", "COMPLETED", "CANCELLED"].includes(status)) {
             throw new Error("El estado no es válido.");
         }
     }

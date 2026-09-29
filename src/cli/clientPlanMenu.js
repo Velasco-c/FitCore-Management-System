@@ -10,12 +10,13 @@ import {
     cancelClientPlan
 } from '../commands/clientPlanCommands.js';
 
-async function getClientPlanData() {
+async function getClientPlanData({ isUpdate = false } = {}) {
     return inquirer.prompt([
         {
             type: 'input',
             name: 'clientId',
             message: 'ID del cliente:',
+            when: () => !isUpdate,
             filter: value => Number(value)
         },
         {
@@ -181,7 +182,7 @@ async function update() {
         return;
     }
 
-    const data = await getClientPlanData();
+    const data = await getClientPlanData({ isUpdate: true });
 
     const clientPlan =
         await updateClientPlan(id, data);

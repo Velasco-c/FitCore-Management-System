@@ -8,12 +8,13 @@ import {
     updateProgressRecord
 } from '../commands/progressCommands.js';
 
-async function getProgressData() {
+async function getProgressData({ isUpdate = false } = {}) {
     return inquirer.prompt([
         {
             type: 'input',
             name: 'clientPlanId',
             message: 'ID de la asignación:',
+            when: () => !isUpdate,
             filter: value => Number(value)
         },
         {
@@ -156,7 +157,7 @@ async function update() {
         return;
     }
 
-    const data = await getProgressData();
+    const data = await getProgressData({ isUpdate: true });
 
     const record =
         await updateProgressRecord(id, data);

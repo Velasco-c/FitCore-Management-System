@@ -1,16 +1,13 @@
 import { Contract } from "../models/Contract.js";
 import { ContractRepository } from "../repositories/ContractRepository.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
-import { ContractValidator } from "../validators/ContractValidator.js";
 
 export class ContractService {
 
     static async create(data) {
-        const validatedData =
-            ContractValidator.validateCreate(data);
         const clientPlan =
             await ClientPlanRepository.findById(
-                validatedData.clientPlanId
+                data.clientPlanId
             );
 
         if (!clientPlan) {
@@ -27,7 +24,7 @@ export class ContractService {
 
         const existingContract =
             await ContractRepository.findByClientPlanId(
-                validatedData.clientPlanId
+                data.clientPlanId
             );
         if (existingContract) {
             throw new Error(
@@ -35,7 +32,8 @@ export class ContractService {
             );
         }
         const contract =
-            new Contract(validatedData);
+            new Contract(data);
+
         return ContractRepository.create(contract);
     }
 
@@ -60,26 +58,23 @@ export class ContractService {
     }
 
     static async update(id, data) {
-    const existingContract =
-        await ContractRepository.findById(id);
-
-    if (!existingContract) {
-        throw new Error("El contrato no existe.");
-    }
-
-    const validatedData =
-        ContractValidator.validateUpdate({
+        const existingContract =
+            await ContractRepository.findById(id);
+        if (!existingContract) {
+            throw new Error("El contrato no existe.");
+        }
+        const updatedData = {
             ...data,
             clientPlanId: existingContract.clientPlanId
-        });
+        };
 
-    const contract =
-        new Contract(validatedData);
+        const contract =
+            new Contract(updatedData);
 
-    return ContractRepository.update(
-        id,
-        contract
-    );
+        return ContractRepository.update(
+            id,
+            contract
+        );
     }
 
     static async updateStatus(id, status) {

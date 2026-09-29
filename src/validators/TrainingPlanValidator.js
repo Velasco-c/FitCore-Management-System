@@ -1,3 +1,8 @@
+import {
+    isFiniteNumber,
+    isPositiveInteger
+} from "../utils/validation.js";
+
 export class TrainingPlanValidator {
 
     static validateCreate(data = {}) {
@@ -32,6 +37,12 @@ export class TrainingPlanValidator {
         return this.validateCreate(data);
     }
 
+    static validateId(value, field) {
+        if (!isPositiveInteger(value)) {
+            throw new Error(`${field} debe ser un ID válido.`);
+        }
+    }
+
     static validateName(name) {
         if (typeof name !== "string" || !name.trim()) {
             throw new Error("El nombre es obligatorio.");
@@ -39,7 +50,7 @@ export class TrainingPlanValidator {
     }
 
     static validatePositiveInteger(value, field) {
-        if (!Number.isInteger(value) || value <= 0) {
+        if (!isPositiveInteger(value)) {
             throw new Error(`${field} debe ser un entero mayor que 0.`);
         }
     }
@@ -51,7 +62,7 @@ export class TrainingPlanValidator {
     }
 
     static validatePrice(price) {
-        if (typeof price !== "number" || price < 0) {
+        if (!isFiniteNumber(price) || price < 0) {
             throw new Error("El precio debe ser un número mayor o igual a 0.");
         }
     }

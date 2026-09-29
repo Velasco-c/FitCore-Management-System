@@ -1,17 +1,14 @@
 import { FinancialTransaction } from "../models/FinancialTransaction.js";
 import { FinancialTransactionRepository } from "../repositories/FinancialTransactionRepository.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
-import { FinancialTransactionValidator } from "../validators/FinancialTransactionValidator.js";
 
 export class FinancialTransactionService {
 
     static async create(data) {
-        const validatedData =
-            FinancialTransactionValidator.validateCreate(data);
-        if (validatedData.clientPlanId) {
+        if (data.clientPlanId) {
             const clientPlan =
                 await ClientPlanRepository.findById(
-                    validatedData.clientPlanId
+                    data.clientPlanId
                 );
             if (!clientPlan) {
                 throw new Error(
@@ -21,7 +18,8 @@ export class FinancialTransactionService {
         }
 
         const transaction =
-            new FinancialTransaction(validatedData);
+            new FinancialTransaction(data);
+
         return FinancialTransactionRepository.create(
             transaction
         );
@@ -36,9 +34,9 @@ export class FinancialTransactionService {
     }
 
     static async findByClientPlanId(clientPlanId) {
-    return FinancialTransactionRepository.findByClientPlanId(
-        clientPlanId
-    );
+        return FinancialTransactionRepository.findByClientPlanId(
+            clientPlanId
+        );
     }
 
     static async findByType(type) {
@@ -48,25 +46,23 @@ export class FinancialTransactionService {
     }
 
     static async update(id, data) {
-    const existingTransaction =
-        await FinancialTransactionRepository.findById(id);
+        const existingTransaction =
+            await FinancialTransactionRepository.findById(id);
 
-    if (!existingTransaction) {
-        throw new Error(
-            "La transacción financiera no existe."
+        if (!existingTransaction) {
+            throw new Error(
+                "La transacción financiera no existe."
+            );
+        }
+
+        const transaction =
+            new FinancialTransaction(data);
+
+        return FinancialTransactionRepository.update(
+            id,
+            transaction
         );
-    }
 
-    const validatedData =
-        FinancialTransactionValidator.validateUpdate(data);
-
-    const transaction =
-        new FinancialTransaction(validatedData);
-
-    return FinancialTransactionRepository.update(
-        id,
-        transaction
-    );
     }
 
     static async updateStatus(id, status) {

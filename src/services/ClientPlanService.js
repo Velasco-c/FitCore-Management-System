@@ -2,17 +2,13 @@ import { ClientPlan } from "../models/ClientPlan.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
 import { ClientRepository } from "../repositories/ClientRepository.js";
 import { TrainingPlanRepository } from "../repositories/TrainingPlanRepository.js";
-import { ClientPlanValidator } from "../validators/ClientPlanValidator.js";
 
 export class ClientPlanService {
 
     static async create(data) {
-        const validatedData =
-            ClientPlanValidator.validateCreate(data);
-
         const client =
             await ClientRepository.findById(
-                validatedData.clientId
+                data.clientId
             );
 
         if (!client) {
@@ -27,7 +23,7 @@ export class ClientPlanService {
 
         const trainingPlan =
             await TrainingPlanRepository.findById(
-                validatedData.trainingPlanId
+                data.trainingPlanId
             );
 
         if (!trainingPlan) {
@@ -44,7 +40,7 @@ export class ClientPlanService {
 
         const activePlans =
             await ClientPlanRepository.findActiveByClientId(
-                validatedData.clientId
+                data.clientId
             );
 
         if (activePlans.length > 0) {
@@ -54,8 +50,7 @@ export class ClientPlanService {
         }
 
         const clientPlan =
-            new ClientPlan(validatedData);
-
+            new ClientPlan(data);
         return ClientPlanRepository.create(clientPlan);
     }
 
@@ -68,9 +63,9 @@ export class ClientPlanService {
     }
 
     static async findActiveByClientId(clientId) {
-        return ClientPlanRepository.findActiveByClientId(
-            clientId
-        );
+
+        return ClientPlanRepository.findActiveByClientId(clientId);
+
     }
 
     static async findAll() {
@@ -78,6 +73,7 @@ export class ClientPlanService {
     }
 
     static async update(id, data) {
+
         const existingPlan =
             await ClientPlanRepository.findById(id);
 
@@ -86,9 +82,6 @@ export class ClientPlanService {
                 "La asignación del plan no existe."
             );
         }
-
-        const validatedData =
-            ClientPlanValidator.validateUpdate(data);
 
         const client =
             await ClientRepository.findById(
@@ -107,7 +100,7 @@ export class ClientPlanService {
 
         const trainingPlan =
             await TrainingPlanRepository.findById(
-                validatedData.trainingPlanId
+                data.trainingPlanId
             );
 
         if (!trainingPlan) {
@@ -122,7 +115,8 @@ export class ClientPlanService {
             );
         }
 
-        if (validatedData.status === "ACTIVE") {
+        if (data.status === "ACTIVE") {
+
             const activePlans =
                 await ClientPlanRepository.findActiveByClientId(
                     existingPlan.clientId
@@ -142,7 +136,7 @@ export class ClientPlanService {
 
         const clientPlan =
             new ClientPlan({
-                ...validatedData,
+                ...data,
                 clientId: existingPlan.clientId
             });
 
@@ -150,6 +144,7 @@ export class ClientPlanService {
             id,
             clientPlan
         );
+
     }
 
     static async cancel(id, cancelledAt, cancellationReason) {
@@ -168,25 +163,10 @@ export class ClientPlanService {
             );
         }
 
-        if (
-            typeof cancellationReason !== "string" ||
-            !cancellationReason.trim()
-        ) {
-            throw new Error(
-                "El motivo de cancelación es obligatorio."
-            );
-        }
-
-        if (!cancelledAt) {
-            throw new Error(
-                "La fecha de cancelación es obligatoria."
-            );
-        }
-
         return ClientPlanRepository.cancel(
             id,
             cancelledAt,
-            cancellationReason.trim()
+            cancellationReason
         );
     }
 }

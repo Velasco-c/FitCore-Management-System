@@ -1,3 +1,5 @@
+import { isFiniteNumber, isPositiveInteger } from "../utils/validation.js";
+
 export class FoodValidator {
 
     static validateCreate(data = {}) {
@@ -25,6 +27,12 @@ export class FoodValidator {
         return this.validateCreate(data);
     }
 
+    static validateId(value, field) {
+        if (!isPositiveInteger(value)) {
+            throw new Error(`${field} debe ser un ID válido.`);
+        }
+    }
+
     static validateName(name) {
         if (typeof name !== "string" || !name.trim()) {
             throw new Error("El nombre es obligatorio.");
@@ -34,7 +42,7 @@ export class FoodValidator {
     static validateCalories(value) {
         if (
             value !== null &&
-            (typeof value !== "number" || value < 0)
+            (!isFiniteNumber(value) || value < 0)
         ) {
             throw new Error(
                 "caloriesPer100g debe ser mayor o igual a 0."

@@ -1,10 +1,13 @@
 import { ProgressRecordService } from '../services/ProgressRecordService.js';
+import { ProgressRecordValidator } from '../validators/ProgressRecordValidator.js';
 
 export async function createProgressRecord(data) {
-    return ProgressRecordService.create(data);
+    const validatedData = ProgressRecordValidator.validateCreate(data);
+    return ProgressRecordService.create(validatedData);
 }
 
 export async function findProgressRecordById(id) {
+    ProgressRecordValidator.validateId(id, "id");
     return ProgressRecordService.findById(id);
 }
 
@@ -12,6 +15,8 @@ export async function findProgressRecordByClientPlanAndDate(
     clientPlanId,
     recordDate
 ) {
+    ProgressRecordValidator.validateId(clientPlanId, "clientPlanId");
+    ProgressRecordValidator.validateDate(recordDate, "recordDate");
     return ProgressRecordService.findByClientPlanAndDate(
         clientPlanId,
         recordDate
@@ -23,13 +28,12 @@ export async function findAllProgressRecords() {
 }
 
 export async function updateProgressRecord(id, data) {
-    return ProgressRecordService.update(id, data);
+    ProgressRecordValidator.validateId(id, "id");
+    const validatedData = ProgressRecordValidator.validateUpdate(data);
+    return ProgressRecordService.update(id, validatedData);
 }
 
-export async function findProgressRecordsByClientPlanId(
-    clientPlanId
-) {
-    return ProgressRecordService.findByClientPlanId(
-        clientPlanId
-    );
+export async function findProgressRecordsByClientPlanId(clientPlanId) {
+    ProgressRecordValidator.validateId(clientPlanId, "clientPlanId");
+    return ProgressRecordService.findByClientPlanId(clientPlanId);
 }

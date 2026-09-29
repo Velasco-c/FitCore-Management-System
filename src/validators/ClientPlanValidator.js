@@ -1,4 +1,11 @@
+import {
+    isFiniteNumber,
+    isPositiveInteger,
+    isValidDate
+} from "../utils/validation.js";
+
 export class ClientPlanValidator {
+    static STATUSES = ["ACTIVE", "COMPLETED", "CANCELLED", "EXPIRED"];
 
     static validateCreate(data = {}) {
         const {
@@ -20,22 +27,11 @@ export class ClientPlanValidator {
         this.validateDateRange(startDate, endDate);
         this.validateStatus(status);
         this.validatePrice(agreedPrice);
-
-        if (status === "CANCELLED") {
-            if (!cancelledAt) {
-                throw new Error(
-                    "Un plan cancelado debe tener cancelledAt."
-                );
-            }
-
-            if (!cancellationReason?.trim()) {
-                throw new Error(
-                    "Un plan cancelado debe tener cancellationReason."
-                );
-            }
-
-            this.validateDate(cancelledAt, "cancelledAt");
-        }
+        this.validateCancellationConsistency(
+            status,
+            cancelledAt,
+            cancellationReason
+        );
 
         return {
             clientId,
@@ -46,22 +42,93 @@ export class ClientPlanValidator {
             agreedPrice,
             goal,
             cancelledAt,
-            cancellationReason
+            cancellationReason: cancellationReason?.trim() ?? null
         };
     }
 
     static validateUpdate(data = {}) {
-        return this.validateCreate(data);
+        const {
+            trainingPlanId,
+            startDate,
+            endDate,
+            status,
+            agreedPrice,
+            goal = null,
+            cancelledAt = null,
+            cancellationReason = null
+        } = data;
+
+        this.validateId(trainingPlanId, "trainingPlanId");
+        this.validateDate(startDate, "startDate");
+        this.validateDate(endDate, "endDate");
+        this.validateDateRange(startDate, endDate);
+        this.validateStatus(status);
+        this.validatePrice(agreedPrice);
+        this.validateCancellationConsistency(
+            status,
+            cancelledAt,
+            cancellationReason
+        );
+
+        return {
+            trainingPlanId,
+            startDate,
+            endDate,
+            status,
+            agreedPrice,
+            goal,
+            cancelledAt,
+            cancellationReason: cancellationReason?.trim() ?? null
+        };
+    }
+
+    static validateCancellation(cancelledAt, cancellationReason) {
+        this.validateDate(cancelledAt, "cancelledAt");
+
+        if (
+            typeof cancellationReason !== "string" ||
+            !cancellationReason.trim()
+        ) {
+            throw new Error(
+                "El motivo de cancelación es obligatorio."
+            );
+        }
+    }
+
+    static validateCancellationConsistency(
+        status,
+        cancelledAt,
+        cancellationReason
+    ) {
+        if (status === "CANCELLED") {
+            this.validateCancellation(cancelledAt, cancellationReason);
+            return;
+        }
+
+        if (cancelledAt !== null && cancelledAt !== undefined) {
+            throw new Error(
+                "Solo un plan cancelado puede tener cancelledAt."
+            );
+        }
+
+        if (
+            cancellationReason !== null &&
+            cancellationReason !== undefined
+        ) {
+            throw new Error(
+                "Solo un plan cancelado puede tener cancellationReason."
+            );
+        }
     }
 
     static validateId(value, field) {
-        if (!Number.isInteger(value) || value <= 0) {
+        if (!isPositiveInteger(value)) {
             throw new Error(`${field} debe ser un ID válido.`);
         }
     }
 
     static validateDate(value, field) {
-        if (!value || Number.isNaN(Date.parse(value))) {
+        if (!isValidDate(value)) {
             throw new Error(`${field} no es una fecha válida.`);
         }
     }
@@ -75,15 +142,13 @@ export class ClientPlanValidator {
     }
 
     static validateStatus(status) {
-        if (
-            !["ACTIVE", "COMPLETED", "CANCELLED", "EXPIRED"].includes(status)
-        ) {
+        if (!this.STATUSES.includes(status)) {
             throw new Error("El estado del plan no es válido.");
         }
     }
 
     static validatePrice(price) {
-        if (typeof price !== "number" || price < 0) {
+        if (!isFiniteNumber(price) || price < 0) {
             throw new Error(
                 "agreedPrice debe ser un número mayor o igual a 0."
             );

@@ -1,17 +1,12 @@
 import { NutritionPlan } from "../models/NutritionPlan.js";
 import { NutritionPlanRepository } from "../repositories/NutritionPlanRepository.js";
 import { ClientPlanRepository } from "../repositories/ClientPlanRepository.js";
-import { NutritionPlanValidator } from "../validators/NutritionPlanValidator.js";
 
 export class NutritionPlanService {
 
     static async create(data) {
-        const validatedData =
-            NutritionPlanValidator.validateCreate(data);
         const clientPlan =
-            await ClientPlanRepository.findById(
-                validatedData.clientPlanId
-            );
+            await ClientPlanRepository.findById(data.clientPlanId);
         if (!clientPlan) {
             throw new Error(
                 "La asignación del plan no existe."
@@ -22,8 +17,7 @@ export class NutritionPlanService {
                 "No se puede crear un plan nutricional para una asignación cancelada."
             );
         }
-        const nutritionPlan =
-            new NutritionPlan(validatedData);
+        const nutritionPlan = new NutritionPlan(data);
         return NutritionPlanRepository.create(
             nutritionPlan
         );
@@ -51,10 +45,7 @@ export class NutritionPlanService {
                 "El plan nutricional no existe."
             );
         }
-        const validatedData =
-            NutritionPlanValidator.validateUpdate(data);
-        const nutritionPlan =
-            new NutritionPlan(validatedData);
+        const nutritionPlan = new NutritionPlan(data);
         return NutritionPlanRepository.update(
             id,
             nutritionPlan

@@ -1,8 +1,24 @@
+import {
+    isFiniteNumber,
+    isPositiveInteger,
+    isValidDate
+} from "../utils/validation.js";
+
 export class ProgressRecordValidator {
 
     static validateCreate(data = {}) {
-        const {
+        const { clientPlanId } = data;
+
+        this.validateId(clientPlanId, "clientPlanId");
+
+        return {
             clientPlanId,
+            ...this.validateUpdate(data)
+        };
+    }
+
+    static validateUpdate(data = {}) {
+        const {
             recordDate,
             weightKg = null,
             bodyFatPercentage = null,
@@ -14,7 +30,6 @@ export class ProgressRecordValidator {
             comments = null
         } = data;
 
-        this.validateId(clientPlanId, "clientPlanId");
         this.validateDate(recordDate, "recordDate");
 
         this.validatePositiveNumber(weightKg, "weightKg");
@@ -25,7 +40,6 @@ export class ProgressRecordValidator {
         this.validatePositiveNumber(legCm, "legCm");
 
         return {
-            clientPlanId,
             recordDate,
             weightKg,
             bodyFatPercentage,
@@ -38,24 +52,20 @@ export class ProgressRecordValidator {
         };
     }
 
-    static validateUpdate(data = {}) {
-        return this.validateCreate(data);
-    }
-
     static validateId(value, field) {
-        if (!Number.isInteger(value) || value <= 0) {
+        if (!isPositiveInteger(value)) {
             throw new Error(`${field} debe ser un ID válido.`);
         }
     }
 
     static validateDate(value, field) {
-        if (!value || Number.isNaN(Date.parse(value))) {
+        if (!isValidDate(value)) {
             throw new Error(`${field} no es una fecha válida.`);
         }
     }
 
     static validatePositiveNumber(value, field) {
-        if (value !== null && (typeof value !== "number" || value <= 0)) {
+        if (value !== null && (!isFiniteNumber(value) || value <= 0)) {
             throw new Error(`${field} debe ser mayor que 0.`);
         }
     }
@@ -63,7 +73,7 @@ export class ProgressRecordValidator {
     static validatePercentage(value) {
         if (
             value !== null &&
-            (typeof value !== "number" || value < 0 || value > 100)
+            (!isFiniteNumber(value) || value < 0 || value > 100)
         ) {
             throw new Error(
                 "bodyFatPercentage debe estar entre 0 y 100."

@@ -1,8 +1,24 @@
+import {
+    isFiniteNumber,
+    isPositiveInteger,
+    isValidDate
+} from "../utils/validation.js";
+
 export class NutritionPlanValidator {
 
     static validateCreate(data = {}) {
-        const {
+        const { clientPlanId } = data;
+
+        this.validateId(clientPlanId, "clientPlanId");
+
+        return {
             clientPlanId,
+            ...this.validateUpdate(data)
+        };
+    }
+
+    static validateUpdate(data = {}) {
+        const {
             name,
             description = null,
             dailyCalorieTarget = null,
@@ -11,7 +27,6 @@ export class NutritionPlanValidator {
             status = "ACTIVE"
         } = data;
 
-        this.validateId(clientPlanId, "clientPlanId");
         this.validateName(name);
         this.validateDate(startDate, "startDate");
         this.validateDate(endDate, "endDate");
@@ -20,7 +35,6 @@ export class NutritionPlanValidator {
         this.validateStatus(status);
 
         return {
-            clientPlanId,
             name: name.trim(),
             description,
             dailyCalorieTarget,
@@ -30,12 +44,8 @@ export class NutritionPlanValidator {
         };
     }
 
-    static validateUpdate(data = {}) {
-        return this.validateCreate(data);
-    }
-
     static validateId(value, field) {
-        if (!Number.isInteger(value) || value <= 0) {
+        if (!isPositiveInteger(value)) {
             throw new Error(`${field} debe ser un ID válido.`);
         }
     }
@@ -47,7 +57,7 @@ export class NutritionPlanValidator {
     }
 
     static validateDate(value, field) {
-        if (!value || Number.isNaN(Date.parse(value))) {
+        if (!isValidDate(value)) {
             throw new Error(`${field} no es una fecha válida.`);
         }
     }
@@ -63,7 +73,7 @@ export class NutritionPlanValidator {
     static validateCalories(value) {
         if (
             value !== null &&
-            (typeof value !== "number" || value <= 0)
+            (!isFiniteNumber(value) || value <= 0)
         ) {
             throw new Error(
                 "dailyCalorieTarget debe ser mayor que 0."
@@ -76,4 +86,4 @@ export class NutritionPlanValidator {
             throw new Error("El estado no es válido.");
         }
     }
-}   
+}
