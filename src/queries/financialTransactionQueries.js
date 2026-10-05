@@ -106,5 +106,15 @@ export const financialTransactionQueries = {
         SET
             status = ?
         WHERE id = ?
-    `
-};
+    `,
+    generateMonthlyReport: `
+        SELECT 
+            SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END) AS total_income,
+            SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END) AS total_expense,
+            (SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END) - 
+            SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END)) AS net_balance
+        FROM financial_transactions
+        WHERE YEAR(transaction_date) = ? AND MONTH(transaction_date) = ?
+        AND (? IS NULL OR client_plan_id = ?);
+        `
+    };

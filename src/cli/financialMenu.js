@@ -1,4 +1,6 @@
 import inquirer from 'inquirer';
+import { generateFinancialReport } from '../commands/financialCommands.js';
+
 
 import {
     createFinancialTransaction,
@@ -233,6 +235,34 @@ async function updateStatus() {
     console.log('\nEstado actualizado correctamente.');
 }
 
+async function generateReport() {
+    const { year, month, clientPlanId } = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'year',
+            message: 'Año del reporte (YYYY):',
+            validate: value => !isNaN(value) && value.length === 4
+        },
+        {
+            type: 'input',
+            name: 'month',
+            message: 'Mes del reporte (MM):',
+            validate: value => !isNaN(value) && value >= 1 && value <= 12
+        },
+        {
+            type: 'input',
+            name: 'clientPlanId',
+            message: 'ID del cliente (opcional):',
+            filter: value => value ? Number(value) : null
+        }
+    ]);
+
+    const report = await generateFinancialReport(year, month, clientPlanId);
+
+    console.log('\\nReporte Financiero:');
+    console.table(report);
+};
+
 export async function showFinancialMenu() {
     let running = true;
 
@@ -264,6 +294,10 @@ export async function showFinancialMenu() {
                         value: 'updateStatus'
                     },
                     {
+                        name: 'Generar reporte financiero',
+                        value: 'generateReport'
+                    },
+                    {
                         name: 'Volver',
                         value: 'back'
                     }
@@ -291,6 +325,10 @@ export async function showFinancialMenu() {
 
                 case 'updateStatus':
                     await updateStatus();
+                    break;
+
+                case 'generateReport':
+                    await generateReport();
                     break;
 
                 case 'back':

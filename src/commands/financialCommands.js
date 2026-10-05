@@ -1,5 +1,7 @@
 import { FinancialTransactionService } from '../services/FinancialTransactionService.js';
 import { FinancialTransactionValidator } from '../validators/FinancialTransactionValidator.js';
+import { financialTransactionQueries } from '../queries/financialTransactionQueries.js';
+import { databaseConfig } from '../config/database.js';
 
 export async function createFinancialTransaction(data) {
     const validatedData =
@@ -44,4 +46,17 @@ export async function findFinancialTransactionsByClientPlanId(
 export async function findFinancialTransactionsByType(type) {
     FinancialTransactionValidator.validateType(type);
     return FinancialTransactionService.findByType(type);
+}
+
+export async function generateFinancialReport(year, month, clientPlanId = null) {
+    const connection = await databaseConfig.getConnection();
+    try {
+        const [rows] = await connection.execute(
+            financialTransactionQueries.generateMonthlyReport,
+            [year, month, clientPlanId, clientPlanId]
+        );
+        return rows[0];
+    } finally {
+        connection.release();
+    }
 }
