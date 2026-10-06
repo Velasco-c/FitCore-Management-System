@@ -1,7 +1,7 @@
 import { FinancialTransactionService } from '../services/FinancialTransactionService.js';
 import { FinancialTransactionValidator } from '../validators/FinancialTransactionValidator.js';
 import { financialTransactionQueries } from '../queries/financialTransactionQueries.js';
-import { databaseConfig } from '../config/database.js';
+import { pool } from '../database/connection.js';
 
 export async function createFinancialTransaction(data) {
     const validatedData =
@@ -49,7 +49,7 @@ export async function findFinancialTransactionsByType(type) {
 }
 
 export async function generateFinancialReport(year, month, clientPlanId = null) {
-    const connection = await databaseConfig.getConnection();
+    const connection = await pool.getConnection();
     try {
         const [rows] = await connection.execute(
             financialTransactionQueries.generateMonthlyReport,
