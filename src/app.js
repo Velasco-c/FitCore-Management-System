@@ -7,6 +7,7 @@ import { showProgressMenu } from './cli/progressMenu.js';
 import { showNutritionMenu } from './cli/nutritionMenu.js';
 import { showFoodMenu } from './cli/foodMenu.js';
 import { showFinancialMenu } from './cli/financialMenu.js';
+import { showBackupMenu } from './cli/backupMenu.js';
 
 async function main() {
     let running = true;
@@ -46,6 +47,10 @@ async function main() {
 
                 case 'financial':
                     await showFinancialMenu();
+                    break;
+
+                case 'backups':
+                    await showBackupMenu();
                     break;
 
                 case 'exit':

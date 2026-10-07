@@ -40,6 +40,10 @@ export async function showMainMenu() {
                     value: 'financial'
                 },
                 {
+                    name: 'Respaldos y Restauración',
+                    value: 'backups'
+                },
+                {
                     name: 'Salir',
                     value: 'exit'
                 }
